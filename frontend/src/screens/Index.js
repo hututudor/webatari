@@ -1,5 +1,12 @@
-import React from "react"
+import React from 'react';
 
-const Index = () => <>index</>;
+import PageWrapper from '../components/PageWrapper';
+import Hero from '../components/Hero';
+
+const Index = () => (
+  <PageWrapper>
+    <Hero />
+  </PageWrapper>
+);
 
 export default Index;

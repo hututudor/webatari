@@ -2,6 +2,10 @@ import { createGlobalStyle } from 'styled-components';
 import { colors } from '../config/theme';
 
 export const GlobalStyle = createGlobalStyle`
+  * {
+    user-select: none;
+  }
+
   html {
     height: 100%;
     scroll-behavior: smooth;
