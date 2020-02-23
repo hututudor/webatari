@@ -20,8 +20,13 @@ export const GlobalStyle = createGlobalStyle`
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
     width: 100%;
+    box-sizing: border-box;
 
     background: ${colors.cool_grey_900};
     color: ${colors.cool_grey_050};
+  }
+  
+  input {
+    font-family: "Press Start 2P", sans-serif;   
   }
 `;

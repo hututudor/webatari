@@ -110,7 +110,7 @@ const Wrapper = styled.div`
     color: ${colors.cool_grey_050};
 
     &.red {
-      color: ${colors.red_vivid_700};
+      color: ${colors.red_vivid_500};
     }
 
     &:hover {
