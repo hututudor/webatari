@@ -6,8 +6,8 @@ import { colors } from '../config/theme';
 
 const Logo = ({ size }) => (
   <Wrapper size={size}>
-    <span>Retro</span>
-    <span>Bit</span>
+    <span>Web</span>
+    <span>Atari</span>
   </Wrapper>
 );
 

@@ -8,7 +8,7 @@ const Hero = () => (
   <Wrapper>
     <div>
       <Logo size={64} />
-      <div>Where retro-lovers meet and discuss</div>
+      <div>Combining modern web interaction with old-school Atari 2600 programming.</div>
     </div>
   </Wrapper>
 );
@@ -17,8 +17,8 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 192px;
-  background: ${colors.cool_grey_900};
+  height: 256px;
+  background: ${colors.blue_vivid_900};
 
   > div {
     display: flex;
