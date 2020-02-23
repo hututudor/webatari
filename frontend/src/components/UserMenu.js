@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { NavLink, useHistory } from 'react-router-dom';
 
@@ -9,6 +9,11 @@ const UserMenu = () => {
   const authContext = useContext(AuthContext.Context);
   const [open, setOpen] = useState(false);
   const history = useHistory();
+  const ref = useRef();
+
+  const closeMenu = () => {
+    setOpen(false);
+  };
 
   const toggleMenu = () => {
     setOpen(!open);
@@ -19,8 +24,23 @@ const UserMenu = () => {
     history.push('/');
   };
 
+  const handleClick = e => {
+    if (ref.current.contains(e.target)) {
+      return;
+    }
+
+    closeMenu();
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClick);
+    return () => {
+      document.removeEventListener('mousedown', handleClick);
+    };
+  }, []);
+
   return (
-    <Wrapper>
+    <Wrapper ref={ref}>
       <div className="header" onClick={toggleMenu}>
         {authContext.state.user.name}{' '}
         <i className={`material-icons ${open ? 'rotate' : ''}`}>
