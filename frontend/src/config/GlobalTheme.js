@@ -26,7 +26,7 @@ export const GlobalStyle = createGlobalStyle`
     color: ${colors.cool_grey_050};
   }
   
-  input {
+  input, button {
     font-family: "Press Start 2P", sans-serif;   
   }
 `;

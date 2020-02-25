@@ -1,13 +1,15 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import axios from 'axios';
 
 import AuthContext from '../utils/AuthContext';
 import PageWrapper from '../components/PageWrapper';
 import { colors } from '../config/theme';
 import Input from '../components/Input';
+import config from '../config/config';
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required('Name is required'),
@@ -15,19 +17,36 @@ const validationSchema = Yup.object().shape({
     .email('Email must be valid')
     .required('Email is required'),
   password: Yup.string()
-    .min(4, 'Password needs to be at least 4 characters long')
+    .min(6, 'Password needs to be at least 6 characters long')
     .required('Password is required')
 });
 
 const Register = () => {
   const authContext = useContext(AuthContext.Context);
   const history = useHistory();
+  const [status, setStatus] = useState('');
 
   if (authContext.isLoggedIn()) {
     history.push('/');
   }
 
-  const onSubmit = async (values, { resetForm, setSubmitting }) => {
+  const onSubmit = async (values, { setSubmitting }) => {
+    setSubmitting(true);
+    setStatus('');
+
+    try {
+      const res = await axios.post(config.serverUrl + '/register', {
+        email: values.email,
+        name: values.name,
+        password: values.password
+      });
+
+      authContext.login(res.data);
+    } catch (e) {
+      console.error(e.response.data.email);
+      setStatus(e.response.data.email);
+    }
+
     setSubmitting(false);
   };
 
@@ -96,9 +115,14 @@ const Register = () => {
                     onChange={handleChange}
                     onBlur={handleBlur}
                   />
+
+                  <button onClick={handleSubmit} disabled={isSubmitting}>
+                    Register
+                  </button>
                 </form>
               )}
             </Formik>
+            <div className="status">{status}</div>
           </div>
         </div>
       </Wrapper>
@@ -120,10 +144,37 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
 
+    .status {
+      color: ${colors.red_vivid_500};
+      text-align: center;
+      margin-top: 8px;
+      font-size: 12px;
+    }
+
     .title {
       font-size: 24px;
       text-align: center;
       margin-bottom: 24px;
+    }
+
+    button {
+      width: 100%;
+      height: 48px;
+      margin-top: 8px;
+      border: none;
+      outline: none;
+      background: ${colors.blue_vivid_700};
+      color: ${colors.blue_vivid_050};
+      font-size: 16px;
+      cursor: pointer;
+
+      :active {
+        background: ${colors.blue_vivid_800};
+      }
+
+      :disabled {
+        background: ${colors.cool_grey_700};
+      }
     }
   }
 `;
