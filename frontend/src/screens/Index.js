@@ -19,18 +19,54 @@ const Index = () => {
   const [discoverLoading, setDiscoverLoading] = useState(true);
 
   useEffect(() => {
-    start();
+    getTrendingProjects();
+    getNewProjects();
+    getDiscoverProjects();
   }, []);
 
-  const start = async () => {
+  const getTrendingProjects = async () => {
     setTrendingProjects(await getProjectsAsync(10));
     setTrendingLoading(false);
+  };
 
+  const getNewProjects = async () => {
     setNewProjects(await getProjectsAsync(10));
     setNewLoading(false);
+  };
 
+  const getDiscoverProjects = async () => {
     setDiscoverProjects(await getProjectsAsync(10));
     setDiscoverLoading(false);
+  };
+
+  const like = (type, id, value) => {
+    const data =
+      type === 'trending'
+        ? trendingProjects
+        : type === 'new'
+        ? newProjects
+        : discoverProjects;
+
+    const index = data.findIndex(project => project.id === id);
+
+    if (index === -1) return;
+
+    const newData = [...data];
+    newData[index].liked = value;
+    
+    if (!value) {
+      newData[index].likes--;
+    } else {
+      newData[index].likes++;
+    }
+
+    if (type === 'trending') {
+      setTrendingProjects(newData);
+    } else if (type === 'new') {
+      setNewProjects(newData);
+    } else {
+      setDiscoverProjects(newData);
+    }
   };
 
   return (
@@ -38,7 +74,7 @@ const Index = () => {
       <Wrapper>
         <Hero />
 
-        <div className="section trending">
+        <div className="section">
           <div className="title">Trending projects</div>
           <div className="cards">
             {!trendingLoading &&
@@ -48,7 +84,7 @@ const Index = () => {
                   key={project.id}
                   project={project}
                   className="project"
-                  onLike={() => {}}
+                  onLike={(id, value) => like('trending', id, value)}
                 />
               ))}
             {trendingLoading && (
@@ -61,7 +97,7 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="section trending">
+        <div className="section">
           <div className="title">New projects</div>
           <div className="cards">
             {!newLoading &&
@@ -71,7 +107,7 @@ const Index = () => {
                   key={project.id}
                   project={project}
                   className="project"
-                  onLike={() => {}}
+                  onLike={(id, value) => like('new', id, value)}
                 />
               ))}
             {newLoading && (
@@ -84,7 +120,7 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="section trending">
+        <div className="section">
           <div className="title">Discover projects</div>
           <div className="cards">
             {!discoverLoading &&
@@ -94,7 +130,7 @@ const Index = () => {
                   key={project.id}
                   project={project}
                   className="project"
-                  onLike={() => {}}
+                  onLike={(id, value) => like('discover', id, value)}
                 />
               ))}
             {discoverLoading && (

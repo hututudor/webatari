@@ -12,13 +12,19 @@ const Project = ({ project, className, onLike }) => {
 
   return (
     <Wrapper className={className}>
-      <div className="title" onClick={() => history.push(`/project/${project.id}`)}>
+      <div
+        className="title"
+        onClick={() => history.push(`/project/${project.id}`)}
+      >
         {project.name}
       </div>
       <div className="description">{project.description}</div>
       <div className="footer">
         <div className="user">{project.user.name}</div>
-        <div className="likes" onClick={onLike}>
+        <div
+          className="likes"
+          onClick={() => onLike(project.id, !project.liked)}
+        >
           <img
             className="heart"
             src={project.liked ? heart_red : heart_black}
