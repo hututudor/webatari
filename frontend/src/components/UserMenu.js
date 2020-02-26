@@ -42,7 +42,7 @@ const UserMenu = () => {
   return (
     <Wrapper ref={ref}>
       <div className="header" onClick={toggleMenu}>
-        {authContext.state.user.name}{' '}
+        {authContext.state.user.name.split(' ')[0]}{' '}
         <i className={`material-icons ${open ? 'rotate' : ''}`}>
           keyboard_arrow_down
         </i>

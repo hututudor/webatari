@@ -53,7 +53,7 @@ const Index = () => {
 
     const newData = [...data];
     newData[index].liked = value;
-    
+
     if (!value) {
       newData[index].likes--;
     } else {
@@ -94,6 +94,12 @@ const Index = () => {
                 color={colors.cool_grey_050}
               />
             )}
+            {((!trendingLoading && !trendingProjects) ||
+              (!trendingLoading && !trendingProjects.length)) && (
+              <div className="empty">
+                Looks kind of empty. How about you create a project yourself?
+              </div>
+            )}
           </div>
         </div>
 
@@ -116,6 +122,12 @@ const Index = () => {
                 loading={true}
                 color={colors.cool_grey_050}
               />
+            )}
+            {((!newLoading && !newProjects) ||
+              (!newLoading && !newProjects.length)) && (
+              <div className="empty">
+                Looks kind of empty. How about you create a project yourself?
+              </div>
             )}
           </div>
         </div>
@@ -140,6 +152,12 @@ const Index = () => {
                 color={colors.cool_grey_050}
               />
             )}
+            {((!discoverLoading && !discoverProjects) ||
+              (!discoverLoading && !discoverProjects.length)) && (
+              <div className="empty">
+                Looks kind of empty. How about you create a project yourself?
+              </div>
+            )}
           </div>
         </div>
       </Wrapper>
@@ -154,6 +172,10 @@ const Wrapper = styled.div`
     min-height: 100px;
     display: flex;
     flex-direction: column;
+
+    .empty {
+      margin-top: 16px;
+    }
 
     > .title {
       font-size: 24px;

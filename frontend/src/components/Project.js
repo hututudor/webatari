@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
+import moment from 'moment';
 
 import { colors } from '../config/theme';
 import heart_black from '../assets/heart_black.svg';
@@ -20,7 +21,13 @@ const Project = ({ project, className, onLike }) => {
       </div>
       <div className="description">{project.description}</div>
       <div className="footer">
-        <div className="user">{project.user.name}</div>
+        <div
+          className="user"
+          onClick={() => history.push(`/user/${project.user.id}`)}
+        >
+          <span className="user-profile">{project.user.name}</span>,{' '}
+          {moment(project.createdAt).fromNow()}
+        </div>
         <div
           className="likes"
           onClick={() => onLike(project.id, !project.liked)}
@@ -61,10 +68,13 @@ const Wrapper = styled.div`
 
     > .user {
       margin-right: 20px;
-      cursor: pointer;
 
-      :hover {
-        color: ${colors.cool_grey_200};
+      > .user-profile {
+        cursor: pointer;
+
+        :hover {
+          color: ${colors.cool_grey_200};
+        }
       }
     }
 

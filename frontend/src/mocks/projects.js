@@ -7,6 +7,7 @@ const getProject = () => ({
   description: faker.lorem.sentence(),
   likes: faker.random.number(1000),
   liked: faker.random.boolean(),
+  createdAt: faker.date.past(),
   user: {
     id: uuid(),
     name: faker.name.findName()
