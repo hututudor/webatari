@@ -8,6 +8,7 @@ import Register from '../screens/Register';
 import Login from '../screens/Login';
 
 import AuthContext from '../utils/AuthContext';
+import User from '../screens/User';
 
 const Root = () => (
   <AuthContext.Provider>
@@ -22,6 +23,9 @@ const Root = () => (
         </Route>
         <Route exact path="/login">
           <Login />
+        </Route>
+        <Route exact path="/user/:id">
+          <User />
         </Route>
         <Route>
           <NotFound />
