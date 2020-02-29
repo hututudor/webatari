@@ -81,4 +81,6 @@ class AuthController extends Controller
 
         return $user;
     }
+
+
 }
