@@ -42,7 +42,7 @@ const UserMenu = () => {
   return (
     <Wrapper ref={ref}>
       <div className="header" onClick={toggleMenu}>
-        {authContext.state.user.name}{' '}
+        {authContext.state.user.name.split(' ')[0]}{' '}
         <i className={`material-icons ${open ? 'rotate' : ''}`}>
           keyboard_arrow_down
         </i>
@@ -50,6 +50,9 @@ const UserMenu = () => {
       <div className={`menu ${open ? '' : 'closed'}`}>
         <NavLink className="link" exact to="/profile">
           Profile
+        </NavLink>
+        <NavLink className="link" exact to="/settings">
+          Settings
         </NavLink>
         <div className="link red" onClick={logout}>
           Logout
@@ -109,12 +112,16 @@ const Wrapper = styled.div`
     text-decoration: none;
     color: ${colors.cool_grey_050};
 
+    &.active {
+      background: ${colors.cool_grey_800} !important;
+    }
+
     &.red {
       color: ${colors.red_vivid_500};
     }
 
     &:hover {
-      background: ${colors.cool_grey_700};
+      background: ${colors.cool_grey_700} !important;
     }
   }
 `;

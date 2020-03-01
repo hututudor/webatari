@@ -19,7 +19,7 @@ const Wrapper = styled.div`
   }
 
   span:nth-child(2) {
-    color: ${colors.red_vivid_900};
+    color: ${colors.red_vivid_700};
   }
 `;
 

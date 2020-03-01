@@ -14,6 +14,8 @@ const PageWrapper = ({ children }) => (
 );
 
 const Wrapper = styled.div`
+  height: 100%;
+
   .page {
     min-height: calc(100vh - 2 * 48px);
     padding-top: 48px;

@@ -9,10 +9,15 @@ const initialState = {
 
 const AuthContextProvider = ({ children }) => {
   const [state, setState] = useState(initialState);
+  const [canRender, setCanRender] = useState(false);
 
   const login = ({ user, token }) => {
     setState({ ...state, user, token });
     localStorage.setItem('token', token);
+  };
+
+  const update = user => {
+    setState({ ...state, user });
   };
 
   const logout = () => {
@@ -28,21 +33,28 @@ const AuthContextProvider = ({ children }) => {
     if (global.user) {
       login({ user: global.user, token: localStorage.getItem('token') });
     }
+
+    setCanRender(true);
   }, []);
 
   console.log(`AUTH CONTEXT`, state);
 
   return (
-    <AuthContext.Provider
-      value={{
-        state,
-        login,
-        logout,
-        isLoggedIn
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+    <>
+      {canRender && (
+        <AuthContext.Provider
+          value={{
+            state,
+            login,
+            logout,
+            update,
+            isLoggedIn
+          }}
+        >
+          {children}
+        </AuthContext.Provider>
+      )}
+    </>
   );
 };
 
