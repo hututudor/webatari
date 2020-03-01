@@ -99,7 +99,7 @@ const ChangeUserDetailsModal = ({ visible, onClose }) => {
                     placeholder="Email"
                     label="Email"
                     name="email"
-                    mb="8px"
+                    mb="0"
                     error={touched.email ? errors.email : null}
                     value={values.email}
                     onChange={handleChange}
