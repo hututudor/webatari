@@ -94,7 +94,7 @@ const ChangePasswordModal = ({ visible, onClose }) => {
                     placeholder="New password"
                     label="New password"
                     name="password"
-                    mb="8px"
+                    mb="8"
                     error={touched.password ? errors.password : null}
                     value={values.password}
                     onChange={handleChange}
