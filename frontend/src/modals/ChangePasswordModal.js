@@ -12,13 +12,15 @@ import axios from 'axios';
 import config from '../config/config';
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string().required('You must have a name'),
-  email: Yup.string()
-    .email('Email must be valid')
-    .required('Email is required')
+  oldPassword: Yup.string()
+    .min(6, 'The password should have at least 6 characters')
+    .required('The old password is required'),
+  password: Yup.string()
+    .min(6, 'The password should have at least 6 characters')
+    .required('The password is required')
 });
 
-const ChangeUserDetailsModal = ({ visible, onClose }) => {
+const ChangePasswordModal = ({ visible, onClose }) => {
   const authContext = useContext(AuthContext.Context);
   const [status, setStatus] = useState('');
 
@@ -27,27 +29,21 @@ const ChangeUserDetailsModal = ({ visible, onClose }) => {
     setStatus('');
 
     try {
-      const res = await axios.post(
+      await axios.put(
         config.serverUrl + '/user',
         {
-          name: values.name,
-          email: values.email
+          password: values.oldPassword,
+          new: values.password
         },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         }
       );
 
-      authContext.update({
-        ...authContext.state.user,
-        name: res.data[0].name,
-        email: res.data[0].email
-      });
-
       onClose();
     } catch (e) {
       console.error(e);
-      setStatus('Something went wrong, please try again');
+      setStatus('The old password does not match');
     }
 
     setSubmitting(false);
@@ -58,10 +54,9 @@ const ChangeUserDetailsModal = ({ visible, onClose }) => {
       <Wrapper>
         <Formik
           initialValues={{
-            name: authContext.state.user.name,
-            email: authContext.state.user.email
+            oldPassword: '',
+            password: ''
           }}
-          enableReinitialize={true}
           onSubmit={onSubmit}
           validationSchema={validationSchema}
         >
@@ -75,19 +70,19 @@ const ChangeUserDetailsModal = ({ visible, onClose }) => {
             isSubmitting
           }) => (
             <>
-              <div className="title">Change your details</div>
+              <div className="title">Change your password</div>
               <div className="content">
                 <form onSubmit={handleSubmit}>
                   <Input
                     hasLabel={true}
                     autoComplete={false}
-                    type="text"
-                    placeholder="Name"
-                    label="Name"
-                    name="name"
+                    type="password"
+                    placeholder="Old password"
+                    label="Old password"
+                    name="oldPassword"
                     mb="8px"
-                    error={touched.name ? errors.name : null}
-                    value={values.name}
+                    error={touched.oldPassword ? errors.oldPassword : null}
+                    value={values.oldPassword}
                     onChange={handleChange}
                     onBlur={handleBlur}
                   />
@@ -95,13 +90,13 @@ const ChangeUserDetailsModal = ({ visible, onClose }) => {
                   <Input
                     hasLabel={true}
                     autoComplete={false}
-                    type="email"
-                    placeholder="Email"
-                    label="Email"
-                    name="email"
+                    type="password"
+                    placeholder="New password"
+                    label="New password"
+                    name="password"
                     mb="8px"
-                    error={touched.email ? errors.email : null}
-                    value={values.email}
+                    error={touched.password ? errors.password : null}
+                    value={values.password}
                     onChange={handleChange}
                     onBlur={handleBlur}
                   />
@@ -145,4 +140,4 @@ const Wrapper = styled.div`
   }
 `;
 
-export default ChangeUserDetailsModal;
+export default ChangePasswordModal;

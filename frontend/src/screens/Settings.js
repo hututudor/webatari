@@ -8,6 +8,7 @@ import AuthContext from '../utils/AuthContext';
 import { DangerButton, PrimaryButton } from '../components/Button';
 import ChangeUserDetailsModal from '../modals/ChangeUserDetailsModal';
 import DeleteUserModal from '../modals/DeleteUserModal';
+import ChangePasswordModal from '../modals/ChangePasswordModal';
 
 const Settings = () => {
   const authContext = useContext(AuthContext.Context);
@@ -16,6 +17,7 @@ const Settings = () => {
     false
   );
   const [deleteUserModalOpen, setDeleteUserModalOpen] = useState(false);
+  const [changePasswordModalOpen, setChangePasswordModalOpen] = useState(false);
 
   if (!authContext.isLoggedIn()) {
     history.push('/');
@@ -32,19 +34,17 @@ const Settings = () => {
           visible={deleteUserModalOpen}
           onClose={() => setDeleteUserModalOpen(false)}
         />
+        <ChangePasswordModal
+          visible={changePasswordModalOpen}
+          onClose={() => setChangePasswordModalOpen(false)}
+        />
 
         <div className="wrapper">
           <div className="section">
             <div className="title">Details</div>
             <div className="description">
-              <div>
-                Name:{' '}
-                {authContext.state.user ? authContext.state.user.name : ''}
-              </div>
-              <div>
-                Email:{' '}
-                {authContext.state.user ? authContext.state.user.email : ''}
-              </div>
+              <div>Name: {authContext.state.user.name}</div>
+              <div>Email: {authContext.state.user.email}</div>
               <div>
                 <PrimaryButton
                   width="400px"
@@ -55,7 +55,12 @@ const Settings = () => {
               </div>
 
               <div>
-                <PrimaryButton width="400px">Change password</PrimaryButton>
+                <PrimaryButton
+                  width="400px"
+                  onClick={() => setChangePasswordModalOpen(true)}
+                >
+                  Change password
+                </PrimaryButton>
               </div>
 
               <div>
