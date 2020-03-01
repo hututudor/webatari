@@ -1,17 +1,25 @@
 import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 
 import PageWrapper from '../components/PageWrapper';
 import { colors } from '../config/theme';
 import AuthContext from '../utils/AuthContext';
 import { DangerButton, PrimaryButton } from '../components/Button';
 import ChangeUserDetailsModal from '../modals/ChangeUserDetailsModal';
+import DeleteUserModal from '../modals/DeleteUserModal';
 
 const Settings = () => {
   const authContext = useContext(AuthContext.Context);
+  const history = useHistory();
   const [changeUserDetailsModalOpen, setChangeUserDetailsModalOpen] = useState(
     false
   );
+  const [deleteUserModalOpen, setDeleteUserModalOpen] = useState(false);
+
+  if (!authContext.isLoggedIn()) {
+    history.push('/');
+  }
 
   return (
     <PageWrapper>
@@ -19,6 +27,10 @@ const Settings = () => {
         <ChangeUserDetailsModal
           visible={changeUserDetailsModalOpen}
           onClose={() => setChangeUserDetailsModalOpen(false)}
+        />
+        <DeleteUserModal
+          visible={deleteUserModalOpen}
+          onClose={() => setDeleteUserModalOpen(false)}
         />
 
         <div className="wrapper">
@@ -47,7 +59,12 @@ const Settings = () => {
               </div>
 
               <div>
-                <DangerButton width="400px">Delete account</DangerButton>
+                <DangerButton
+                  width="400px"
+                  onClick={() => setDeleteUserModalOpen(true)}
+                >
+                  Delete account
+                </DangerButton>
               </div>
             </div>
           </div>
