@@ -10,6 +10,7 @@ import PageWrapper from '../components/PageWrapper';
 import { colors } from '../config/theme';
 import Input from '../components/Input';
 import config from '../config/config';
+import { PrimaryButton } from '../components/Button';
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
@@ -29,7 +30,7 @@ const Login = () => {
     history.push('/');
   }
 
-  const onSubmit = async (values, { setSubmitting, resetForm }) => {
+  const onSubmit = async (values, { setSubmitting, setFieldValue }) => {
     setSubmitting(true);
     setStatus('');
 
@@ -43,7 +44,7 @@ const Login = () => {
     } catch (e) {
       console.error(e.response.data.error);
       setStatus(e.response.data.error);
-      resetForm();
+      setFieldValue('password', '');
     }
 
     setSubmitting(false);
@@ -101,9 +102,9 @@ const Login = () => {
                     onBlur={handleBlur}
                   />
 
-                  <button onClick={handleSubmit} disabled={isSubmitting}>
+                  <PrimaryButton onClick={handleSubmit} disabled={isSubmitting}>
                     Login
-                  </button>
+                  </PrimaryButton>
                 </form>
               )}
             </Formik>
@@ -142,25 +143,25 @@ const Wrapper = styled.div`
       margin-bottom: 24px;
     }
 
-    button {
-      width: 100%;
-      height: 48px;
-      margin-top: 8px;
-      border: none;
-      outline: none;
-      background: ${colors.blue_vivid_700};
-      color: ${colors.blue_vivid_050};
-      font-size: 16px;
-      cursor: pointer;
-
-      :active {
-        background: ${colors.blue_vivid_800};
-      }
-
-      :disabled {
-        background: ${colors.cool_grey_700};
-      }
-    }
+    // button {
+    //   width: 100%;
+    //   height: 48px;
+    //   margin-top: 8px;
+    //   border: none;
+    //   outline: none;
+    //   background: ${colors.blue_vivid_700};
+    //   color: ${colors.blue_vivid_050};
+    //   font-size: 16px;
+    //   cursor: pointer;
+    //
+    //   :active {
+    //     background: ${colors.blue_vivid_800};
+    //   }
+    //
+    //   :disabled {
+    //     background: ${colors.cool_grey_700};
+    //   }
+    // }
   }
 `;
 

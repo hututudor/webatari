@@ -41,8 +41,6 @@ const User = () => {
     setUser({ ...user, projects: newData });
   };
 
-  console.log('User', user);
-
   return (
     <PageWrapper>
       <Wrapper>

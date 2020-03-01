@@ -15,6 +15,10 @@ const AuthContextProvider = ({ children }) => {
     localStorage.setItem('token', token);
   };
 
+  const update = user => {
+    setState({ ...state, user });
+  };
+
   const logout = () => {
     setState(initialState);
     localStorage.removeItem('token');
@@ -38,6 +42,7 @@ const AuthContextProvider = ({ children }) => {
         state,
         login,
         logout,
+        update,
         isLoggedIn
       }}
     >
