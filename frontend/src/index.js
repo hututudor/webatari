@@ -5,6 +5,11 @@ import axios from 'axios';
 import Root from './components/Root';
 import config from './config/config';
 
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/theme/ayu-mirage.css';
+import './assets/codemirror-atari';
+import './assets/codemirror-6502';
+
 global.user = null;
 
 if (localStorage.getItem('token')) {

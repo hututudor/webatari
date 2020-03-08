@@ -48,7 +48,11 @@ const UserMenu = () => {
         </i>
       </div>
       <div className={`menu ${open ? '' : 'closed'}`}>
-        <NavLink className="link" exact to="/profile">
+        <NavLink
+          className="link"
+          exact
+          to={`/user/${authContext.state.user.id}`}
+        >
           Profile
         </NavLink>
         <NavLink className="link" exact to="/settings">
