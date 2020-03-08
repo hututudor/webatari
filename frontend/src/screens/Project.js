@@ -62,8 +62,8 @@ const Project = () => {
 };
 
 const Wrapper = styled.div`
-  margin: 64px 256px;
-  width: calc(100% - 2 * 256px);
+  margin: 64px 128px;
+  width: calc(100% - 2 * 128px);
   height: calc(100vh - 2 * 48px - 2 * 64px);
   display: flex;
   justify-content: space-around;
