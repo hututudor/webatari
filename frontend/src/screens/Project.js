@@ -1,18 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Controlled as CodeMirror } from 'react-codemirror2';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
+import { PulseLoader } from 'react-spinners';
 
 import PageWrapper from '../components/PageWrapper';
+import {
+  DangerButton,
+  PrimaryButton,
+  WarningButton
+} from '../components/Button';
 import { colors } from '../config/theme';
 import { getProjectAsync } from '../mocks/projects';
-import { PulseLoader } from 'react-spinners';
 
 const Project = () => {
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const { id } = useParams();
+  const history = useHistory();
 
   useEffect(() => {
     getProject();
@@ -42,7 +48,27 @@ const Project = () => {
                 value={project.code}
               />
             </div>
-            <div className="column">adkjkjldjfdkf</div>
+            <div className="column margin">
+              <div className="name">{project.name}</div>
+              <div
+                className="author"
+                onClick={() => history.push(`/user/${project.user.id}`)}
+              >
+                {project.user.name}
+              </div>
+              <div className="description">{project.description}</div>
+              <div className="divider" />
+              <div className="buttons">
+                <div className="row">
+                  <PrimaryButton>Run</PrimaryButton>
+                </div>
+                <div className="row">
+                  <PrimaryButton disabled={false}>Save</PrimaryButton>
+                  <WarningButton>Edit</WarningButton>
+                  <DangerButton>Delete</DangerButton>
+                </div>
+              </div>
+            </div>
           </>
         )}
         {loading && (
@@ -70,6 +96,40 @@ const Wrapper = styled.div`
 
   .column {
     width: 50%;
+
+    &.margin {
+      margin: 32px 64px;
+    }
+
+    > .name {
+      color: ${colors.blue_vivid_100};
+      font-size: 24px;
+      padding-bottom: 8px;
+    }
+
+    > .author {
+      color: ${colors.cool_grey_100};
+      cursor: pointer;
+      padding-bottom: 20px;
+
+      :hover {
+        color: ${colors.cool_grey_200};
+      }
+    }
+
+    > .description {
+    }
+
+    > .divider {
+      margin-top: 40px;
+    }
+
+    > .buttons {
+      > .row {
+        display: flex;
+        flex-direction: row;
+      }
+    }
   }
 
   .codemirror,
