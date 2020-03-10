@@ -2,11 +2,12 @@ import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 
 import Modal from './Modal';
-import {DangerButton, SecondaryButton} from '../components/Button'
+import { DangerButton, SecondaryButton } from '../components/Button';
 import { colors } from '../config/theme';
 import AuthContext from '../utils/AuthContext';
 import axios from 'axios';
 import config from '../config/config';
+import { toast } from 'react-toastify';
 
 const DeleteUserModal = ({ visible, onClose }) => {
   const authContext = useContext(AuthContext.Context);
@@ -20,9 +21,9 @@ const DeleteUserModal = ({ visible, onClose }) => {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
 
-      authContext.logout();
-
       onClose();
+      authContext.logout();
+      toast.success('Account removed!');
     } catch (e) {
       console.error(e);
     }

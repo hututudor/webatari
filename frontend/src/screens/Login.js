@@ -11,6 +11,7 @@ import { colors } from '../config/theme';
 import Input from '../components/Input';
 import config from '../config/config';
 import { PrimaryButton } from '../components/Button';
+import {toast} from "react-toastify"
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
@@ -41,6 +42,7 @@ const Login = () => {
       });
 
       authContext.login(res.data);
+      toast.success('Welcome back!')
     } catch (e) {
       console.error(e.response.data.error);
       setStatus(e.response.data.error);

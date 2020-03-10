@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
+import { toast } from 'react-toastify';
 
 import Modal from './Modal';
 import { PrimaryButton, SecondaryButton } from '../components/Button';
@@ -41,6 +42,7 @@ const ChangePasswordModal = ({ visible, onClose }) => {
       );
 
       onClose();
+      toast.success('Password changed!');
     } catch (e) {
       console.error(e);
       setStatus('The old password does not match');

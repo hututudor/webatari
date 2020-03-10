@@ -10,6 +10,7 @@ import PageWrapper from '../components/PageWrapper';
 import { colors } from '../config/theme';
 import Input from '../components/Input';
 import config from '../config/config';
+import { toast } from 'react-toastify';
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required('Name is required'),
@@ -42,6 +43,7 @@ const Register = () => {
       });
 
       authContext.login(res.data);
+      toast.success('Welcome!');
     } catch (e) {
       console.error(e.response.data.email);
       setStatus(e.response.data.email);

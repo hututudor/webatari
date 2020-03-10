@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import { GlobalStyle } from '../config/GlobalTheme';
 import Index from '../screens/Index';
@@ -11,6 +12,11 @@ import Project from '../screens/Project';
 
 import AuthContext from '../utils/AuthContext';
 import User from '../screens/User';
+
+toast.configure({
+  position: toast.POSITION.BOTTOM_RIGHT,
+  className: 'toast'
+});
 
 const Root = () => (
   <AuthContext.Provider>

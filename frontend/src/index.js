@@ -5,10 +5,11 @@ import axios from 'axios';
 import Root from './components/Root';
 import config from './config/config';
 
+import 'react-toastify/dist/ReactToastify.css';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/ayu-mirage.css';
-import './assets/codemirror-atari';
 import './assets/codemirror-6502';
+import './assets/toast.css';
 
 global.user = null;
 

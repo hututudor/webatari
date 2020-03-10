@@ -10,6 +10,7 @@ import Input from '../components/Input';
 import AuthContext from '../utils/AuthContext';
 import axios from 'axios';
 import config from '../config/config';
+import { toast } from 'react-toastify';
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required('You must have a name'),
@@ -45,6 +46,7 @@ const ChangeUserDetailsModal = ({ visible, onClose }) => {
       });
 
       onClose();
+      toast.success('Updated!');
     } catch (e) {
       console.error(e);
       setStatus('Something went wrong, please try again');

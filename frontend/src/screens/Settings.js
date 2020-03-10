@@ -32,7 +32,10 @@ const Settings = () => {
         />
         <DeleteUserModal
           visible={deleteUserModalOpen}
-          onClose={() => setDeleteUserModalOpen(false)}
+          onClose={() => {
+            history.push('/');
+            setDeleteUserModalOpen(false);
+          }}
         />
         <ChangePasswordModal
           visible={changePasswordModalOpen}
