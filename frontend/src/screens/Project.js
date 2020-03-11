@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import { useParams, useHistory } from 'react-router-dom';
 import { PulseLoader } from 'react-spinners';
+import dasm from 'dasm';
+import { toast } from 'react-toastify';
 
 import PageWrapper from '../components/PageWrapper';
 import {
@@ -12,10 +14,15 @@ import {
 } from '../components/Button';
 import { colors } from '../config/theme';
 import { getProjectAsync } from '../mocks/projects';
+import AuthContext from '../utils/AuthContext';
+import config from '../config/config';
 
 const Project = () => {
+  const authContext = useContext(AuthContext.Context);
   const [project, setProject] = useState(null);
+  const [oldCode, setOldCode] = useState('');
   const [loading, setLoading] = useState(true);
+  const [compiling, setCompiling] = useState(false);
 
   const { id } = useParams();
   const history = useHistory();
@@ -25,8 +32,49 @@ const Project = () => {
   }, []);
 
   const getProject = async () => {
-    setProject(await getProjectAsync());
+    const project = await getProjectAsync();
+    setProject(project);
+    setOldCode(project.code);
     setLoading(false);
+  };
+
+  const hasCodeChanged = () => {
+    return oldCode !== project.code;
+  };
+
+  const compile = () => {
+    try {
+      const result = dasm(project.code, {
+        format: 3,
+        quick: true,
+        machine: 'atari2600'
+      });
+      const ROM = result.data;
+      console.log(ROM);
+    } catch (e) {
+      console.error(e);
+      toast.error('Compilation failed!');
+    }
+  };
+
+  const run = () => {
+    if (hasCodeChanged()) {
+      setCompiling(true);
+      compile();
+      setCompiling(false);
+    }
+
+    window.open(
+      `https://javatari.org?ROM=${config.serverUrl}/roms/${project.id}.rom`,
+      '_blank'
+    );
+  };
+
+  const isAuthor = () => {
+    return (
+      // authContext.state.user && authContext.state.user.id === project.user.id
+      true
+    );
   };
 
   return (
@@ -40,10 +88,11 @@ const Project = () => {
                 options={{
                   mode: '6502',
                   theme: 'ayu-mirage',
-                  lineNumbers: true
+                  lineNumbers: true,
+                  readOnly: !isAuthor()
                 }}
                 onBeforeChange={(editor, data, value) => {
-                  setProject({ ...project, code: data });
+                  setProject({ ...project, code: value });
                 }}
                 value={project.code}
               />
@@ -60,13 +109,17 @@ const Project = () => {
               <div className="divider" />
               <div className="buttons">
                 <div className="row">
-                  <PrimaryButton>Run</PrimaryButton>
+                  <PrimaryButton onClick={run} disabled={compiling}>
+                    {hasCodeChanged() && 'Compile & '} Run
+                  </PrimaryButton>
                 </div>
-                <div className="row">
-                  <PrimaryButton disabled={false}>Save</PrimaryButton>
-                  <WarningButton>Edit</WarningButton>
-                  <DangerButton>Delete</DangerButton>
-                </div>
+                {isAuthor() && (
+                  <div className="row">
+                    <PrimaryButton disabled={false}>Save</PrimaryButton>
+                    <WarningButton>Edit</WarningButton>
+                    <DangerButton>Delete</DangerButton>
+                  </div>
+                )}
               </div>
             </div>
           </>
