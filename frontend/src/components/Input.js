@@ -10,6 +10,7 @@ const Input = ({
   error,
   onChange,
   onBlur,
+  onKeyPress,
   autoComplete,
   type,
   placeholder,
@@ -27,6 +28,7 @@ const Input = ({
     )}
     <input
       value={value}
+      onKeyDown={onKeyPress}
       onChange={onChange}
       onBlur={onBlur}
       autoComplete={autoComplete === false ? 'off' : ''}
@@ -84,6 +86,7 @@ Input.propTypes = {
   error: PropTypes.bool,
   onChange: PropTypes.func,
   onBlur: PropTypes.func,
+  onKeyPress: PropTypes.func,
   autoComplete: PropTypes.bool,
   type: PropTypes.string,
   placeholder: PropTypes.string,
