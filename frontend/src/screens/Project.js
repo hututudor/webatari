@@ -131,6 +131,7 @@ const Project = () => {
                 className="author"
                 onClick={() => history.push(`/user/${project.user.id}`)}
               >
+                <span className="title">By </span>
                 {project.user.name}
               </div>
               <div className="description">{project.description}</div>
@@ -199,6 +200,14 @@ const Wrapper = styled.div`
       cursor: pointer;
       padding-bottom: 20px;
 
+      > .title {
+        color: ${colors.cool_grey_050};
+
+        :hover {
+          color: ${colors.cool_grey_050};
+        }
+      }
+
       :hover {
         color: ${colors.cool_grey_200};
       }
@@ -222,6 +231,9 @@ const Wrapper = styled.div`
   .codemirror,
   .codemirror > div {
     height: 100% !important;
+    font-family: 'Press Start 2P', serif !important;
+    line-height: 1.5 !important;
+    font-size: 12px;
   }
 `;
 

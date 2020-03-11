@@ -9,6 +9,7 @@ import Register from '../screens/Register';
 import Login from '../screens/Login';
 import Settings from '../screens/Settings';
 import Project from '../screens/Project';
+import About from '../screens/About';
 
 import AuthContext from '../utils/AuthContext';
 import User from '../screens/User';
@@ -28,6 +29,9 @@ const Root = () => (
         </Route>
         <Route exact path="/register">
           <Register />
+        </Route>
+        <Route exact path="/about">
+          <About />
         </Route>
         <Route exact path="/login">
           <Login />
