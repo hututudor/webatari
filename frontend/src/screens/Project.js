@@ -17,6 +17,7 @@ import { getProjectAsync } from '../mocks/projects';
 import AuthContext from '../utils/AuthContext';
 import config from '../config/config';
 import DeleteProjectModal from '../modals/DeleteProjectModal';
+import EditProjectModal from '../modals/EditProjectModal';
 
 const Project = () => {
   const authContext = useContext(AuthContext.Context);
@@ -25,6 +26,7 @@ const Project = () => {
   const [loading, setLoading] = useState(true);
   const [compiling, setCompiling] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
 
   const { id } = useParams();
   const history = useHistory();
@@ -81,6 +83,8 @@ const Project = () => {
     }
   };
 
+  const save = () => {};
+
   const isAuthor = () => {
     return (
       // authContext.state.user && authContext.state.user.id === project.user.id
@@ -96,6 +100,14 @@ const Project = () => {
             <DeleteProjectModal
               visible={deleteModalOpen}
               onClose={() => setDeleteModalOpen(false)}
+              project={project}
+            />
+            <EditProjectModal
+              visible={editModalOpen}
+              onClose={({ name, description }) => {
+                setEditModalOpen(false);
+                setProject({ ...project, name, description });
+              }}
               project={project}
             />
             <div className="column">
@@ -131,8 +143,12 @@ const Project = () => {
                 </div>
                 {isAuthor() && (
                   <div className="row">
-                    <PrimaryButton disabled={false}>Save</PrimaryButton>
-                    <WarningButton>Edit</WarningButton>
+                    <PrimaryButton disabled={!hasCodeChanged()} onClick={save}>
+                      Save
+                    </PrimaryButton>
+                    <WarningButton onClick={() => setEditModalOpen(true)}>
+                      Edit
+                    </WarningButton>
                     <DangerButton onClick={() => setDeleteModalOpen(true)}>
                       Delete
                     </DangerButton>

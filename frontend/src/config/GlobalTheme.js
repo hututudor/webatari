@@ -24,9 +24,14 @@ export const GlobalStyle = createGlobalStyle`
 
     background: ${colors.cool_grey_900};
     color: ${colors.cool_grey_050};
+    line-height: 1.3 !important;
   }
   
   input, button {
     font-family: "Press Start 2P", sans-serif;   
+  }
+  
+  textarea {
+    line-height: 1.3 !important;
   }
 `;
