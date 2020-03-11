@@ -16,6 +16,7 @@ import { colors } from '../config/theme';
 import { getProjectAsync } from '../mocks/projects';
 import AuthContext from '../utils/AuthContext';
 import config from '../config/config';
+import DeleteProjectModal from '../modals/DeleteProjectModal';
 
 const Project = () => {
   const authContext = useContext(AuthContext.Context);
@@ -23,6 +24,7 @@ const Project = () => {
   const [oldCode, setOldCode] = useState('');
   const [loading, setLoading] = useState(true);
   const [compiling, setCompiling] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const { id } = useParams();
   const history = useHistory();
@@ -91,6 +93,11 @@ const Project = () => {
       <Wrapper>
         {!loading && project && (
           <>
+            <DeleteProjectModal
+              visible={deleteModalOpen}
+              onClose={() => setDeleteModalOpen(false)}
+              project={project}
+            />
             <div className="column">
               <CodeMirror
                 className="codemirror"
@@ -126,7 +133,9 @@ const Project = () => {
                   <div className="row">
                     <PrimaryButton disabled={false}>Save</PrimaryButton>
                     <WarningButton>Edit</WarningButton>
-                    <DangerButton>Delete</DangerButton>
+                    <DangerButton onClick={() => setDeleteModalOpen(true)}>
+                      Delete
+                    </DangerButton>
                   </div>
                 )}
               </div>

@@ -1,29 +1,29 @@
 import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 
 import Modal from './Modal';
 import { DangerButton, SecondaryButton } from '../components/Button';
 import { colors } from '../config/theme';
-import AuthContext from '../utils/AuthContext';
 import axios from 'axios';
 import config from '../config/config';
 import { toast } from 'react-toastify';
 
-const DeleteUserModal = ({ visible, onClose }) => {
-  const authContext = useContext(AuthContext.Context);
+const DeleteProjectModal = ({ visible, onClose, project }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const history = useHistory();
 
   const onSubmit = async () => {
     setIsSubmitting(true);
 
     try {
-      await axios.delete(config.serverUrl + '/user', {
+      await axios.delete(config.serverUrl + `/projects/${project.id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
 
+      history.push('/');
       onClose();
-      authContext.logout();
-      toast.success('Account removed!');
+      toast.success('Project removed!');
     } catch (e) {
       console.error(e);
       toast.error('Something went wrong!');
@@ -35,7 +35,7 @@ const DeleteUserModal = ({ visible, onClose }) => {
   return (
     <Modal visible={visible}>
       <Wrapper>
-        <div className="title">Delete account</div>
+        <div className="title">Delete project</div>
         <div className="content">Are you really sure?</div>
         <div className="actions">
           <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
@@ -71,4 +71,4 @@ const Wrapper = styled.div`
   }
 `;
 
-export default DeleteUserModal;
+export default DeleteProjectModal;
