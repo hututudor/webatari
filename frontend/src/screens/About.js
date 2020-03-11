@@ -1,13 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { PulseLoader } from 'react-spinners';
-import { useParams } from 'react-router-dom';
-import moment from 'moment';
 
 import PageWrapper from '../components/PageWrapper';
-import Project from '../components/Project';
 import { colors } from '../config/theme';
-import { getUser, getUserAsync } from '../mocks/user';
 
 const About = () => (
   <PageWrapper>
