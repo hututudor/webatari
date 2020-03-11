@@ -6,6 +6,7 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+use phpDocumentor\Reflection\Project;
 
 class UserController extends Controller
 {
@@ -32,7 +33,7 @@ class UserController extends Controller
     public function changeName(Request $request){
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255']
+            'email' => ['required', 'email', 'max:255', 'unique']
         ]);
         if($validator->fails() ) {
             return response()->json($validator->errors(), 400);
@@ -86,13 +87,13 @@ class UserController extends Controller
         if(!$user) {
             return response()->json('', 404);
         }
-        $album = Album::where('uuid', $uuid)->first();
-        if(!$album){
+        $project = Project::where('uuid', $uuid)->first();
+        if(!$project){
             return response()->json('', 404);
         }
-        if($album->user_id != $user->id){
+        if($project->user_id != $user->id){
             return response()->json('', 403);
         }
-        return response()->json(compact('album'), 200);
+        return response()->json(compact('project'), 200);
     }
 }

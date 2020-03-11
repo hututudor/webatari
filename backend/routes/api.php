@@ -16,6 +16,11 @@ use Illuminate\Http\Request;
 Route::post('register', 'AuthController@register');
 Route::post('login', 'AuthController@authenticate');
 
+Route::get('projects/trending', 'ProjectController@trending');
+Route::get('projects/new', 'ProjectController@newest');
+Route::get('projects/random', 'ProjectController@discovery');
+Route::get('projects/random', 'ProjectController@discovery');
+Route::get('search/{data}', 'ProjectController@search');
 // middleware for auth-only routes
 Route::group(['middleware' => ['jwt.verify']], function() {
 
@@ -28,4 +33,15 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::put('user', 'UserController@changePass');
     Route::delete('user', 'UserController@deleteSelf');
     Route::get('users', 'UserController@getall');
+
+    Route::get('projects/{uuid}', 'ProjectController@get');
+    Route::get('projects', 'ProjectController@getall');
+    Route::get('projects/user/{id}', 'ProjectController@getspecific');
+    Route::get('projects/dislike/{uuid}', 'ProjectController@dislike');
+    Route::get('projects/like/{uuid}', 'ProjectController@like');
+    Route::post('projects', 'ProjectController@add');
+    Route::put('projects/{uuid}', 'ProjectController@edit');
+    Route::put('projects/editcode/{uuid}', 'ProjectController@editcode');
+    Route::delete('projects/{uuid}', 'ProjectController@delete');
 });
+
