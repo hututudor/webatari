@@ -43,31 +43,40 @@ const Project = () => {
   };
 
   const compile = () => {
-    try {
-      const result = dasm(project.code, {
-        format: 3,
-        quick: true,
-        machine: 'atari2600'
-      });
-      const ROM = result.data;
-      console.log(ROM);
-    } catch (e) {
-      console.error(e);
+    const result = dasm(project.code, {
+      format: 3,
+      quick: true,
+      machine: 'atari2600'
+    });
+    const ROM = result.data;
+    console.log(ROM);
+    console.log(result.exitStatus);
+
+    if (result.exitStatus) {
+      console.error(result.output);
       toast.error('Compilation failed!');
+      toast.error(result.output[2]);
+      return false;
     }
+
+    return true;
   };
 
   const run = () => {
+    let open = true;
+
     if (hasCodeChanged()) {
       setCompiling(true);
-      compile();
+      open = compile();
       setCompiling(false);
     }
 
-    window.open(
-      `https://javatari.org?ROM=${config.serverUrl}/roms/${project.id}.rom`,
-      '_blank'
-    );
+    if (open) {
+      window.open(
+        `https://javatari.org?ROM=${config.serverUrl}/roms/${project.id}.rom`,
+        '_blank'
+      );
+    }
   };
 
   const isAuthor = () => {
