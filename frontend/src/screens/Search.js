@@ -10,6 +10,8 @@ import { colors } from '../config/theme';
 import User from '../components/User';
 import { getUsersAsync } from '../mocks/user';
 import Input from '../components/Input';
+import config from '../config/config';
+import axios from 'axios';
 
 const Index = () => {
   const [projects, setProjects] = useState([]);
@@ -21,23 +23,26 @@ const Index = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const search = async term => {
-    await Promise.all([getProjects(term), getUsers(term)]);
-  };
+    if (!term.trim()) {
+      return;
+    }
 
-  const getProjects = async term => {
     setProjectsLoading(true);
-    setProjects(await getProjectsAsync(10));
-    setProjectsLoading(false);
-  };
-
-  const getUsers = async term => {
     setUserLoading(true);
-    setUsers(await getUsersAsync(10));
+
+    const res = await axios.get(config.serverUrl + '/search/' + term, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+    });
+
+    setUsers(res.data.response.users);
+    setProjects(res.data.response.projects);
+
+    setProjectsLoading(false);
     setUserLoading(false);
   };
 
-  const like = (type, id, value) => {
-    const index = projects.findIndex(project => project.id === id);
+  const like = async (type, id, value) => {
+    const index = projects.findIndex(project => project.uuid === id);
 
     if (index === -1) return;
 
@@ -51,6 +56,21 @@ const Index = () => {
     }
 
     setProjects(newData);
+
+    try {
+      let url = '';
+      if (value) {
+        url = config.serverUrl + '/projects/like/' + id;
+      } else {
+        url = config.serverUrl + '/projects/dislike/' + id;
+      }
+
+      await axios.get(url, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (

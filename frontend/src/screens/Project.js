@@ -5,6 +5,7 @@ import { useParams, useHistory } from 'react-router-dom';
 import { PulseLoader } from 'react-spinners';
 import dasm from 'dasm';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 
 import PageWrapper from '../components/PageWrapper';
 import {
@@ -36,10 +37,15 @@ const Project = () => {
   }, []);
 
   const getProject = async () => {
-    const project = await getProjectAsync();
-    setProject(project);
-    setOldCode(project.code);
-    setLoading(false);
+    try {
+      const res = await axios.get(config.serverUrl + '/projects/' + id);
+      const project = res.data.project;
+      setProject(project);
+      setOldCode(project.code);
+      setLoading(false);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const hasCodeChanged = () => {
@@ -77,7 +83,7 @@ const Project = () => {
 
     if (open) {
       window.open(
-        `https://javatari.org?ROM=${config.serverUrl}/roms/${project.id}.rom`,
+        `https://javatari.org?ROM=${config.serverUrl}/roms/${project.uuid}`,
         '_blank'
       );
     }
@@ -87,8 +93,7 @@ const Project = () => {
 
   const isAuthor = () => {
     return (
-      // authContext.state.user && authContext.state.user.id === project.user.id
-      true
+      authContext.state.user && authContext.state.user.id === project.user.id
     );
   };
 
@@ -97,19 +102,23 @@ const Project = () => {
       <Wrapper>
         {!loading && project && (
           <>
-            <DeleteProjectModal
-              visible={deleteModalOpen}
-              onClose={() => setDeleteModalOpen(false)}
-              project={project}
-            />
-            <EditProjectModal
-              visible={editModalOpen}
-              onClose={({ name, description }) => {
-                setEditModalOpen(false);
-                setProject({ ...project, name, description });
-              }}
-              project={project}
-            />
+            {isAuthor() && (
+              <>
+                <DeleteProjectModal
+                  visible={deleteModalOpen}
+                  onClose={() => setDeleteModalOpen(false)}
+                  project={project}
+                />
+                <EditProjectModal
+                  visible={editModalOpen}
+                  onClose={({ name, description }) => {
+                    setEditModalOpen(false);
+                    setProject({ ...project, name, description });
+                  }}
+                  project={project}
+                />
+              </>
+            )}
             <div className="column">
               <CodeMirror
                 className="codemirror"

@@ -15,7 +15,7 @@ const Project = ({ project, className, onLike }) => {
     <Wrapper className={className}>
       <div
         className="title"
-        onClick={() => history.push(`/project/${project.id}`)}
+        onClick={() => history.push(`/project/${project.uuid}`)}
       >
         {project.name}
       </div>
@@ -30,7 +30,7 @@ const Project = ({ project, className, onLike }) => {
         </div>
         <div
           className="likes"
-          onClick={() => onLike(project.id, !project.liked)}
+          onClick={() => onLike(project.uuid, !project.liked)}
         >
           <img
             className="heart"
