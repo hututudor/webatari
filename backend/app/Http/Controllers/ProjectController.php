@@ -6,6 +6,7 @@ use App\Like;
 use App\Project;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Webpatser\Uuid\Uuid;
@@ -142,10 +143,6 @@ class ProjectController extends Controller
 
     public function getall()
     {
-        $user = AuthController::getUser();
-        if (!$user) {
-            return response()->json('', 404);
-        }
         $projects = Project::all();
         if (!$projects) {
             return response()->json('', 404);
@@ -155,10 +152,6 @@ class ProjectController extends Controller
 
     public function get($uuid)
     {
-        $user = AuthController::getUser();
-        if (!$user) {
-            return response()->json('', 404);
-        }
         $project = Project::where('uuid', $uuid)->first();
         if (!$project) {
             return response()->json('', 404);
@@ -175,7 +168,7 @@ class ProjectController extends Controller
         $project = Project::where('uuid', $uuid)->first();
         $like1 = Like::where('user_id', $user->id)->where('project_uuid', $project->uuid)->first();
         if ($like1) {
-            return response()->json('', 404);
+            return response()->json('', 401);
         }
         $like = new Like();
         $like->user_id = $user->id;
@@ -227,11 +220,9 @@ class ProjectController extends Controller
         return response()->json(compact('projects'), 200);
     }
 
-    public function search(Request $request)
+    public function search($data)
     {
-        $data = $request->get('data');
-
-        $projects = Project::where('name', 'like', "%{$data}%")->orWhere('description', 'like', "%{$data}%")->with('user')->get();
+        $projects = Project::where('name', 'like', "%{$data}%")->orWhere('description', 'like', "%{$data}%")->get();
         $users = User::where('name', 'like', "%{$data}%")->orWhere('email', 'like', "%{$data}%")->get();
         $response = [];
         $response['projects'] = $projects;
