@@ -13,6 +13,27 @@ use Webpatser\Uuid\Uuid;
 class ProjectController extends Controller
 {
 
+    public function getRom($id)
+    {
+        $location = base_path() . '/storage/app/roms/' . $id . '.rom';
+        return readfile($location);
+    }
+
+    public function compile(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'data' => ['required', 'array']
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
+
+        $location = base_path() . '/storage/app/roms/' . $id . '.rom';
+        file_put_contents($location, $request->data);
+        return response()->json('', 200);
+    }
+
     public function add(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -35,6 +56,10 @@ class ProjectController extends Controller
         $project->author = $user->name;
         $project->description = $request->description;
         $project->save();
+
+        $base = base_path() . '/storage/app/roms/default.rom';
+        $location = base_path() . '/storage/app/roms/' . $project->uuid . '.rom';
+        \File::copy($base, $location);
         return response()->json(compact('project'), 200);
     }
 
@@ -101,11 +126,6 @@ class ProjectController extends Controller
         if ($project->user_id != $user->id) {
             return response()->json('', 403);
         }
-//        $resources = $project->resources;
-//        foreach($resources as $resource){
-//            Storage::delete('files/' . $resource->location);
-//            $resource->delete();
-//        }
         $project->delete();
         return response()->json('', 200);
     }
@@ -200,8 +220,8 @@ class ProjectController extends Controller
     public function discovery()
     {
         $c = Project::all()->count();
-        if($c>10){
-            $c=10;
+        if ($c > 10) {
+            $c = 10;
         }
         $projects = Project::all()->random($c)->values();
         return response()->json(compact('projects'), 200);

@@ -19,8 +19,8 @@ Route::post('login', 'AuthController@authenticate');
 Route::get('projects/trending', 'ProjectController@trending');
 Route::get('projects/new', 'ProjectController@newest');
 Route::get('projects/random', 'ProjectController@discovery');
-Route::get('projects/random', 'ProjectController@discovery');
 Route::get('search/{data}', 'ProjectController@search');
+
 // middleware for auth-only routes
 Route::group(['middleware' => ['jwt.verify']], function() {
 
@@ -43,5 +43,6 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::put('projects/{uuid}', 'ProjectController@edit');
     Route::put('projects/editcode/{uuid}', 'ProjectController@editcode');
     Route::delete('projects/{uuid}', 'ProjectController@delete');
+    Route::post('projects/compile/{id}', 'ProjectController@compile');
 });
 
