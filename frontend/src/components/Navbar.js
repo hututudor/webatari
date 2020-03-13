@@ -15,6 +15,9 @@ const Navbar = () => {
         <NavLink className="link" exact to="/">
           Home
         </NavLink>
+        <NavLink className="link" exact to="/search">
+          Search
+        </NavLink>
         <NavLink className="link" exact to="/about">
           About
         </NavLink>

@@ -1,9 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 
 import PageWrapper from '../components/PageWrapper';
-import { colors } from '../config/theme';
 import AuthContext from '../utils/AuthContext';
 import { DangerButton, PrimaryButton } from '../components/Button';
 import ChangeUserDetailsModal from '../modals/ChangeUserDetailsModal';
@@ -32,7 +31,10 @@ const Settings = () => {
         />
         <DeleteUserModal
           visible={deleteUserModalOpen}
-          onClose={() => setDeleteUserModalOpen(false)}
+          onClose={() => {
+            history.push('/');
+            setDeleteUserModalOpen(false);
+          }}
         />
         <ChangePasswordModal
           visible={changePasswordModalOpen}

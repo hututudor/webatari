@@ -3,14 +3,13 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { colors } from '../config/theme';
 
-const Input = ({
+const TextArea = ({
   hasLabel,
   label,
   value,
   error,
   onChange,
   onBlur,
-  onKeyPress,
   autoComplete,
   type,
   placeholder,
@@ -26,13 +25,12 @@ const Input = ({
         {required ? '*' : ''}
       </label>
     )}
-    <input
+    <textarea
+      rows={4}
       value={value}
-      onKeyDown={onKeyPress}
       onChange={onChange}
       onBlur={onBlur}
       autoComplete={autoComplete === false ? 'off' : ''}
-      type={type}
       placeholder={placeholder}
       required={required}
       className={error ? 'error' : ''}
@@ -49,7 +47,8 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
 
-  input {
+  textarea {
+    resize: none;
     margin: 8px 0 0 0;
     background: ${colors.cool_grey_900};
     color: ${colors.cool_grey_050};
@@ -60,6 +59,7 @@ const Wrapper = styled.div`
     border-bottom: 1px solid
       ${props => (props.error ? colors.red_vivid_500 : colors.cool_grey_800)};
     transition: all 0.15s;
+    font-family: 'Press Start 2P', serif !important;
 
     &:focus {
       border-bottom: 1px solid
@@ -80,13 +80,12 @@ const Wrapper = styled.div`
   }
 `;
 
-Input.propTypes = {
+TextArea.propTypes = {
   label: PropTypes.string,
   value: PropTypes.string,
   error: PropTypes.bool,
   onChange: PropTypes.func,
   onBlur: PropTypes.func,
-  onKeyPress: PropTypes.func,
   autoComplete: PropTypes.bool,
   type: PropTypes.string,
   placeholder: PropTypes.string,
@@ -97,7 +96,7 @@ Input.propTypes = {
   mb: PropTypes.string
 };
 
-Input.defaultProps = {
+TextArea.defaultProps = {
   label: 'Label',
   value: '',
   error: false,
@@ -110,4 +109,4 @@ Input.defaultProps = {
   mb: 0
 };
 
-export default Input;
+export default TextArea;

@@ -118,3 +118,22 @@ export const SecondaryButton = ({
     disabledColor={colors.cool_grey_700}
   />
 );
+
+export const WarningButton = ({
+  content,
+  disabled,
+  onClick,
+  children,
+  width
+}) => (
+  <Button
+    width={width}
+    content={content || children}
+    disabled={disabled}
+    onClick={onClick}
+    backgroundColor={colors.yellow_vivid_500}
+    foregroundColor={colors.yellow_vivid_050}
+    activeColor={colors.yellow_vivid_600}
+    disabledColor={colors.cool_grey_700}
+  />
+);

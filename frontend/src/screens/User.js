@@ -1,31 +1,55 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { PulseLoader } from 'react-spinners';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import moment from 'moment';
 
 import PageWrapper from '../components/PageWrapper';
 import Project from '../components/Project';
 import { colors } from '../config/theme';
-import { getUser, getUserAsync } from '../mocks/user';
+import config from '../config/config';
+import axios from 'axios';
+import { PrimaryButton } from '../components/Button';
+import AddProjectModal from '../modals/AddProjectModal';
+import AuthContext from '../utils/AuthContext';
 
 const User = () => {
+  const [addModalOpen, setAddModalOpen] = useState(false);
+
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const { id } = useParams();
+  const history = useHistory();
+
+  const authContext = useContext(AuthContext.Context);
 
   useEffect(() => {
-    getUser(id);
-  }, []);
+    getUser();
+  }, [id]);
 
   const getUser = async () => {
-    setUser(await getUserAsync());
-    setLoading(false);
+    try {
+      setLoading(true);
+      const [userRes, projectsRes] = await Promise.all([
+        axios.get(config.serverUrl + '/user/' + id),
+        axios.get(config.serverUrl + '/projects/user/' + id, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        })
+      ]);
+      const user = userRes.data.user;
+      const projects = projectsRes.data.projects;
+      setUser({ ...user, projects });
+      setLoading(false);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
-  const like = (id, value) => {
-    const index = user.projects.findIndex(project => project.id === id);
+  const like = async (projectId, value) => {
+    const index = user.projects.findIndex(
+      project => project.uuid === projectId
+    );
 
     if (index === -1) return;
 
@@ -39,6 +63,21 @@ const User = () => {
     }
 
     setUser({ ...user, projects: newData });
+
+    try {
+      let url = '';
+      if (value) {
+        url = config.serverUrl + '/projects/like/' + projectId;
+      } else {
+        url = config.serverUrl + '/projects/dislike/' + projectId;
+      }
+
+      await axios.get(url, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (
@@ -47,6 +86,14 @@ const User = () => {
         <div className={`wrapper ${loading ? 'loading' : ''}`}>
           {!loading && user && (
             <>
+              <AddProjectModal
+                visible={addModalOpen}
+                onClose={() => setAddModalOpen(false)}
+                onDone={id => {
+                  setAddModalOpen(false);
+                  history.push('/project/' + id);
+                }}
+              />
               <div className="section">
                 <div className="title">About</div>
                 <div className="description">
@@ -58,17 +105,27 @@ const User = () => {
                 </div>
               </div>
 
+              {authContext.isLoggedIn() &&
+                authContext.state.user.id === user.id && (
+                  <div className="section-button">
+                    <PrimaryButton
+                      width="400px"
+                      onClick={() => setAddModalOpen(true)}
+                    >
+                      Create project
+                    </PrimaryButton>
+                  </div>
+                )}
+
               <div className="section">
-                <div className="title">
-                  Projects ({user.projects.length})
-                </div>
+                <div className="title">Projects ({user.projects.length})</div>
                 <div className="cards">
                   {user.projects.map(project => (
                     <Project
                       key={project.id}
                       project={project}
                       className="project"
-                      onLike={(id, value) => like(id, value)}
+                      onLike={(projectId, value) => like(projectId, value)}
                     />
                   ))}
                 </div>
@@ -113,6 +170,9 @@ const Wrapper = styled.div`
     min-height: 100px;
     display: flex;
     flex-direction: column;
+
+    &-button {
+    }
 
     .empty {
       margin-top: 16px;

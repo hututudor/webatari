@@ -1,13 +1,13 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
+import { toast } from 'react-toastify';
 
 import Modal from './Modal';
 import { PrimaryButton, SecondaryButton } from '../components/Button';
 import { colors } from '../config/theme';
 import Input from '../components/Input';
-import AuthContext from '../utils/AuthContext';
 import axios from 'axios';
 import config from '../config/config';
 
@@ -21,7 +21,6 @@ const validationSchema = Yup.object().shape({
 });
 
 const ChangePasswordModal = ({ visible, onClose }) => {
-  const authContext = useContext(AuthContext.Context);
   const [status, setStatus] = useState('');
 
   const onSubmit = async (values, { setSubmitting }) => {
@@ -41,6 +40,7 @@ const ChangePasswordModal = ({ visible, onClose }) => {
       );
 
       onClose();
+      toast.success('Password changed!');
     } catch (e) {
       console.error(e);
       setStatus('The old password does not match');

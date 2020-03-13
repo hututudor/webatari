@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
@@ -7,20 +7,17 @@ import Modal from './Modal';
 import { PrimaryButton, SecondaryButton } from '../components/Button';
 import { colors } from '../config/theme';
 import Input from '../components/Input';
-import AuthContext from '../utils/AuthContext';
 import axios from 'axios';
 import config from '../config/config';
 import { toast } from 'react-toastify';
+import TextArea from '../components/TextArea';
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string().required('You must have a name'),
-  email: Yup.string()
-    .email('Email must be valid')
-    .required('Email is required')
+  name: Yup.string().required('Name is required'),
+  description: Yup.string().required('Description is required')
 });
 
-const ChangeUserDetailsModal = ({ visible, onClose }) => {
-  const authContext = useContext(AuthContext.Context);
+const AddProjectModal = ({ visible, onClose, onDone }) => {
   const [status, setStatus] = useState('');
 
   const onSubmit = async (values, { setSubmitting }) => {
@@ -29,24 +26,18 @@ const ChangeUserDetailsModal = ({ visible, onClose }) => {
 
     try {
       const res = await axios.post(
-        config.serverUrl + '/user',
+        config.serverUrl + `/projects`,
         {
           name: values.name,
-          email: values.email
+          description: values.description
         },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         }
       );
 
-      authContext.update({
-        ...authContext.state.user,
-        name: res.data[0].name,
-        email: res.data[0].email
-      });
-
-      onClose();
-      toast.success('Updated!');
+      onDone(res.data.project.uuid);
+      toast.success('Created!');
     } catch (e) {
       console.error(e);
       setStatus('Something went wrong, please try again');
@@ -60,8 +51,8 @@ const ChangeUserDetailsModal = ({ visible, onClose }) => {
       <Wrapper>
         <Formik
           initialValues={{
-            name: authContext.state.user.name,
-            email: authContext.state.user.email
+            name: '',
+            email: ''
           }}
           enableReinitialize={true}
           onSubmit={onSubmit}
@@ -77,7 +68,7 @@ const ChangeUserDetailsModal = ({ visible, onClose }) => {
             isSubmitting
           }) => (
             <>
-              <div className="title">Change your details</div>
+              <div className="title">Create project</div>
               <div className="content">
                 <form onSubmit={handleSubmit}>
                   <Input
@@ -94,16 +85,16 @@ const ChangeUserDetailsModal = ({ visible, onClose }) => {
                     onBlur={handleBlur}
                   />
 
-                  <Input
+                  <TextArea
                     hasLabel={true}
                     autoComplete={false}
-                    type="email"
-                    placeholder="Email"
-                    label="Email"
-                    name="email"
+                    type="text"
+                    placeholder="Description"
+                    label="Description"
+                    name="description"
                     mb="0"
-                    error={touched.email ? errors.email : null}
-                    value={values.email}
+                    error={touched.description ? errors.description : null}
+                    value={values.description}
                     onChange={handleChange}
                     onBlur={handleBlur}
                   />
@@ -113,7 +104,7 @@ const ChangeUserDetailsModal = ({ visible, onClose }) => {
               <div className="actions">
                 <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
                 <PrimaryButton onClick={handleSubmit} disabled={isSubmitting}>
-                  Save
+                  Create
                 </PrimaryButton>
               </div>
             </>
@@ -147,4 +138,4 @@ const Wrapper = styled.div`
   }
 `;
 
-export default ChangeUserDetailsModal;
+export default AddProjectModal;

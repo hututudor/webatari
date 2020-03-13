@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { PulseLoader } from 'react-spinners';
+import axios from 'axios';
 
 import PageWrapper from '../components/PageWrapper';
 import Hero from '../components/Hero';
-import { getProjectsAsync } from '../mocks/projects';
 import Project from '../components/Project';
 import { colors } from '../config/theme';
+import config from '../config/config';
 
 const Index = () => {
   const [trendingProjects, setTrendingProjects] = useState(null);
@@ -19,27 +20,50 @@ const Index = () => {
   const [discoverLoading, setDiscoverLoading] = useState(true);
 
   useEffect(() => {
-    getTrendingProjects();
-    getNewProjects();
-    getDiscoverProjects();
+    Promise.all([
+      getTrendingProjects(),
+      getNewProjects(),
+      getDiscoverProjects()
+    ]);
   }, []);
 
   const getTrendingProjects = async () => {
-    setTrendingProjects(await getProjectsAsync(10));
-    setTrendingLoading(false);
+    try {
+      const res = await axios.get(config.serverUrl + '/projects/trending', {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      setTrendingProjects(res.data.projects);
+      setTrendingLoading(false);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const getNewProjects = async () => {
-    setNewProjects(await getProjectsAsync(10));
-    setNewLoading(false);
+    try {
+      const res = await axios.get(config.serverUrl + '/projects/new', {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      setNewProjects(res.data.projects);
+      setNewLoading(false);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const getDiscoverProjects = async () => {
-    setDiscoverProjects(await getProjectsAsync(10));
-    setDiscoverLoading(false);
+    try {
+      const res = await axios.get(config.serverUrl + '/projects/random', {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      setDiscoverProjects(res.data.projects);
+      setDiscoverLoading(false);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
-  const like = (type, id, value) => {
+  const like = async (type, id, value) => {
     const data =
       type === 'trending'
         ? trendingProjects
@@ -47,7 +71,7 @@ const Index = () => {
         ? newProjects
         : discoverProjects;
 
-    const index = data.findIndex(project => project.id === id);
+    const index = data.findIndex(project => project.uuid === id);
 
     if (index === -1) return;
 
@@ -66,6 +90,21 @@ const Index = () => {
       setNewProjects(newData);
     } else {
       setDiscoverProjects(newData);
+    }
+
+    try {
+      let url = '';
+      if (value) {
+        url = config.serverUrl + '/projects/like/' + id;
+      } else {
+        url = config.serverUrl + '/projects/dislike/' + id;
+      }
+
+      await axios.get(url, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+    } catch (e) {
+      console.error(e);
     }
   };
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 const Modal = ({ children, visible }) => {
@@ -25,6 +25,7 @@ const Wrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 10;
 `;
 
 export default Modal;
