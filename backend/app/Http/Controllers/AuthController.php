@@ -67,20 +67,37 @@ class AuthController extends Controller
 
     public static function getUser()
     {
-        try {
-            if (!$user = JWTAuth::parseToken()->authenticate()) {
-                return null;
-            }
-        } catch (TokenExpiredException $e) {
-            return response()->json(['token_expired'], $e->getStatusCode());
-        } catch (TokenInvalidException $e) {
-            return response()->json(['token_invalid'], $e->getStatusCode());
-        } catch (JWTException $e) {
-            return response()->json(['token_absent'], $e->getStatusCode());
+        $user = self::getAuth();
+        if (!$user) {
+            return response()->json(['token invalid'], 500);
         }
 
         return $user;
     }
 
+    public static function getAuth()
+    {
+        try {
+            if (!$user = JWTAuth::parseToken()->authenticate()) {
+                return null;
+            }
+        } catch (TokenExpiredException $e) {
+            return false;
+        } catch (TokenInvalidException $e) {
+            return false;
+        } catch (JWTException $e) {
+            return false;
+        }
 
+        return $user;
+    }
+
+    public static function getUserIfAuth()
+    {
+        if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+            return self::getUser();
+        } else {
+            return false;
+        }
+    }
 }
