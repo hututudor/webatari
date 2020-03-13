@@ -6,6 +6,7 @@ use App\Like;
 use App\Project;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -17,7 +18,9 @@ class ProjectController extends Controller
     public function getRom($id)
     {
         $location = base_path() . '/storage/app/roms/' . $id . '.rom';
-        return readfile($location);
+        $file = File::get($location);
+
+        return $file;
     }
 
     public function compile(Request $request, $id)
