@@ -23,7 +23,7 @@ class ProjectController extends Controller
     public function compile(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'data' => ['required', 'array']
+            'data' => ['required']
         ]);
 
         if ($validator->fails()) {
@@ -31,7 +31,16 @@ class ProjectController extends Controller
         }
 
         $location = base_path() . '/storage/app/roms/' . $id . '.rom';
-        file_put_contents($location, $request->data);
+
+        $file = fopen($location, 'wb+');
+        $string = '';
+        foreach ($request->data as $int) {
+            $string .= chr($int);
+        }
+        var_dump($string);
+        fwrite($file, $string);
+        fclose($file);
+
         return response()->json('', 200);
     }
 
