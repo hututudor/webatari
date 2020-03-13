@@ -14,7 +14,6 @@ import {
   WarningButton
 } from '../components/Button';
 import { colors } from '../config/theme';
-import { getProjectAsync } from '../mocks/projects';
 import AuthContext from '../utils/AuthContext';
 import config from '../config/config';
 import DeleteProjectModal from '../modals/DeleteProjectModal';
@@ -52,7 +51,8 @@ const Project = () => {
     return oldCode !== project.code;
   };
 
-  const compile = () => {
+  const compile = async () => {
+    setCompiling(true);
     const result = dasm(project.code, {
       format: 3,
       quick: true,
@@ -69,16 +69,32 @@ const Project = () => {
       return false;
     }
 
+    const data = ROM;
+
+    try {
+      await axios.post(
+        config.serverUrl + '/projects/compile/' + project.uuid,
+        {
+          data
+        },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        }
+      );
+    } catch (e) {
+      console.error(e);
+    }
+
+    toast.success('Compiled!');
+    setCompiling(false);
     return true;
   };
 
-  const run = () => {
+  const run = async () => {
     let open = true;
 
     if (hasCodeChanged()) {
-      setCompiling(true);
-      open = compile();
-      setCompiling(false);
+      open = await compile();
     }
 
     if (open) {
@@ -89,7 +105,26 @@ const Project = () => {
     }
   };
 
-  const save = () => {};
+  const save = async () => {
+    try {
+      toast.success('Saving...');
+      setCompiling(true);
+      await axios.put(
+        config.serverUrl + '/projects/editcode/' + project.uuid,
+        {
+          code: project.code
+        },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        }
+      );
+      toast.success('Saved');
+      setOldCode(project.code);
+      await compile();
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const isAuthor = () => {
     return (
@@ -111,7 +146,10 @@ const Project = () => {
                 />
                 <EditProjectModal
                   visible={editModalOpen}
-                  onClose={({ name, description }) => {
+                  onClose={() => {
+                    setEditModalOpen(false);
+                  }}
+                  onDone={({ name, description }) => {
                     setEditModalOpen(false);
                     setProject({ ...project, name, description });
                   }}

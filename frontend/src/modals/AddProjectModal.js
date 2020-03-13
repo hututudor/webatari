@@ -18,8 +18,7 @@ const validationSchema = Yup.object().shape({
   description: Yup.string().required('Description is required')
 });
 
-const EditProjectModal = ({ visible, onClose, onDone, project }) => {
-  const authContext = useContext(AuthContext.Context);
+const AddProjectModal = ({ visible, onClose, onDone }) => {
   const [status, setStatus] = useState('');
 
   const onSubmit = async (values, { setSubmitting }) => {
@@ -27,8 +26,8 @@ const EditProjectModal = ({ visible, onClose, onDone, project }) => {
     setStatus('');
 
     try {
-      await axios.put(
-        config.serverUrl + `/projects/${project.uuid}`,
+      const res = await axios.post(
+        config.serverUrl + `/projects`,
         {
           name: values.name,
           description: values.description
@@ -38,8 +37,8 @@ const EditProjectModal = ({ visible, onClose, onDone, project }) => {
         }
       );
 
-      onDone({ name: values.name, description: values.description });
-      toast.success('Updated!');
+      onDone(res.data.project.uuid);
+      toast.success('Created!');
     } catch (e) {
       console.error(e);
       setStatus('Something went wrong, please try again');
@@ -53,8 +52,8 @@ const EditProjectModal = ({ visible, onClose, onDone, project }) => {
       <Wrapper>
         <Formik
           initialValues={{
-            name: project.name,
-            description: project.description
+            name: '',
+            email: ''
           }}
           enableReinitialize={true}
           onSubmit={onSubmit}
@@ -70,7 +69,7 @@ const EditProjectModal = ({ visible, onClose, onDone, project }) => {
             isSubmitting
           }) => (
             <>
-              <div className="title">Edit project</div>
+              <div className="title">Create project</div>
               <div className="content">
                 <form onSubmit={handleSubmit}>
                   <Input
@@ -106,7 +105,7 @@ const EditProjectModal = ({ visible, onClose, onDone, project }) => {
               <div className="actions">
                 <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
                 <PrimaryButton onClick={handleSubmit} disabled={isSubmitting}>
-                  Save
+                  Create
                 </PrimaryButton>
               </div>
             </>
@@ -140,4 +139,4 @@ const Wrapper = styled.div`
   }
 `;
 
-export default EditProjectModal;
+export default AddProjectModal;

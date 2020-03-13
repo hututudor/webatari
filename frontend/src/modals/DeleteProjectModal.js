@@ -17,7 +17,7 @@ const DeleteProjectModal = ({ visible, onClose, project }) => {
     setIsSubmitting(true);
 
     try {
-      await axios.delete(config.serverUrl + `/projects/${project.id}`, {
+      await axios.delete(config.serverUrl + `/projects/${project.uuid}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
 
