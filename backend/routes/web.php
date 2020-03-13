@@ -15,4 +15,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/rom/{id}', 'ProjectController@getRom');
+Route::get('api/roms/{id}', 'ProjectController@getRom');
