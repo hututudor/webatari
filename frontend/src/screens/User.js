@@ -47,6 +47,8 @@ const User = () => {
   };
 
   const like = async (projectId, value) => {
+    if (!authContext.isLoggedIn()) return;
+
     const index = user.projects.findIndex(
       project => project.uuid === projectId
     );

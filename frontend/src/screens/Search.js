@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 import { PulseLoader } from 'react-spinners';
 
@@ -9,8 +9,11 @@ import User from '../components/User';
 import Input from '../components/Input';
 import config from '../config/config';
 import axios from 'axios';
+import AuthContext from '../utils/AuthContext';
 
 const Index = () => {
+  const authContext = useContext(AuthContext.Context);
+
   const [projects, setProjects] = useState([]);
   const [projectsloading, setProjectsLoading] = useState(false);
 
@@ -39,6 +42,8 @@ const Index = () => {
   };
 
   const like = async (type, id, value) => {
+    if (!authContext.isLoggedIn()) return;
+
     const index = projects.findIndex(project => project.uuid === id);
 
     if (index === -1) return;

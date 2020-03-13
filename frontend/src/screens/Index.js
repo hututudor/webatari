@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { PulseLoader } from 'react-spinners';
 import axios from 'axios';
@@ -8,8 +8,11 @@ import Hero from '../components/Hero';
 import Project from '../components/Project';
 import { colors } from '../config/theme';
 import config from '../config/config';
+import AuthContext from '../utils/AuthContext';
 
 const Index = () => {
+  const authContext = useContext(AuthContext.Context);
+
   const [trendingProjects, setTrendingProjects] = useState(null);
   const [trendingLoading, setTrendingLoading] = useState(true);
 
@@ -94,6 +97,8 @@ const Index = () => {
   };
 
   const like = async (type, id, value) => {
+    if (!authContext.isLoggedIn()) return;
+
     if (!trendingLoading) await update('trending', id, value);
 
     if (!newLoading) await update('new', id, value);
