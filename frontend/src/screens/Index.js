@@ -63,7 +63,7 @@ const Index = () => {
     }
   };
 
-  const like = async (type, id, value) => {
+  const update = async (type, id, value) => {
     const data =
       type === 'trending'
         ? trendingProjects
@@ -91,6 +91,14 @@ const Index = () => {
     } else {
       setDiscoverProjects(newData);
     }
+  };
+
+  const like = async (type, id, value) => {
+    if (!trendingLoading) await update('trending', id, value);
+
+    if (!newLoading) await update('new', id, value);
+
+    if (!discoverLoading) await update('discover', id, value);
 
     try {
       let url = '';
