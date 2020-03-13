@@ -26,7 +26,7 @@ const Project = ({ project, className, onLike }) => {
           onClick={() => history.push(`/user/${project.user.id}`)}
         >
           <span className="user-profile">{project.user.name}</span>,{' '}
-          {moment(project.createdAt).fromNow()}
+          {moment(project.created_at).fromNow()}
         </div>
         <div
           className="likes"
