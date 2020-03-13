@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
@@ -7,7 +7,6 @@ import Modal from './Modal';
 import { PrimaryButton, SecondaryButton } from '../components/Button';
 import { colors } from '../config/theme';
 import Input from '../components/Input';
-import AuthContext from '../utils/AuthContext';
 import axios from 'axios';
 import config from '../config/config';
 import { toast } from 'react-toastify';
@@ -19,7 +18,6 @@ const validationSchema = Yup.object().shape({
 });
 
 const EditProjectModal = ({ visible, onClose, onDone, project }) => {
-  const authContext = useContext(AuthContext.Context);
   const [status, setStatus] = useState('');
 
   const onSubmit = async (values, { setSubmitting }) => {

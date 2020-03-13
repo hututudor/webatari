@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { PulseLoader } from 'react-spinners';
 
 import PageWrapper from '../components/PageWrapper';
-import Hero from '../components/Hero';
-import { getProjectsAsync } from '../mocks/projects';
 import Project from '../components/Project';
 import { colors } from '../config/theme';
 import User from '../components/User';
-import { getUsersAsync } from '../mocks/user';
 import Input from '../components/Input';
 import config from '../config/config';
 import axios from 'axios';
