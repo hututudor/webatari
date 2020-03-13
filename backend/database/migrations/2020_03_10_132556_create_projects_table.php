@@ -19,7 +19,7 @@ class CreateProjectsTable extends Migration
             $table->string('uuid');
             $table->string('name');
             $table->string('author');
-            $table->text('code');
+            $table->longText('code');
             $table->text('description');
             $table->integer('likes');
             $table->timestamps();
