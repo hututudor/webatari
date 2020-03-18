@@ -32,7 +32,7 @@ Execute in the frontend folder:
 
 ## Explaining some decisions we have taken
 
-#### Why the font is pixelated?
+#### Why is the font pixelated?
 We did this to match our retro-styling and to improve the immersion a user will experince
 
 #### Why I cannot view this on my mobile phone
