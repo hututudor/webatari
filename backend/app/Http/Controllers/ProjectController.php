@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Commentlike;
 use App\Like;
 use App\Project;
+use App\Projectoftheday;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -241,6 +245,45 @@ class ProjectController extends Controller
         $response['users'] = $users;
         return response()->json(compact('response'), 200);
     }
-}
 
+    public static function projectoftheday()
+    {
+        $likes = Like:: where('created_at', '>=', Carbon::now()->subDay())->get();
+        $array = "";
+        foreach ($likes as $like) {
+            $project = $like->project_uuid;
+            $array = $array . $project . ",";
+        }
+        $result = array_count_values(explode(',', $array));
+        arsort($result);
+        $keys = array_keys($result);
+        foreach(Projectoftheday::all() as $p){
+          $p->uuid = $keys[0];
+        }
+        return $keys[0];
+    }
+
+    public function projectofthedaysim()
+    {
+        $likes = Like:: where('created_at', '>=', Carbon::now()->subDay())->get();
+        $array = "";
+        foreach ($likes as $like) {
+            $project = $like->project_uuid;
+            $array = $array . $project . ",";
+        }
+        $result = array_count_values(explode(',', $array));
+        arsort($result);
+        $keys = array_keys($result);
+        DB::table('projectofthedays')->where('id', 1)->update(['uuid' => $keys[0]]);
+        return $keys[0];
+    }
+
+    public function projectofthedayshow(){
+        $uuid = Projectoftheday::get()->first()->uuid;
+        $project = Project::where('uuid', $uuid)->first();
+
+        return response()->json(compact('project'), 200);
+
+    }
+}
 

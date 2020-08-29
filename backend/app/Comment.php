@@ -15,7 +15,7 @@ class Comment extends Model
         $user = AuthController::getAuth();
 
         if ($user) {
-            if (Commentlike::where('user_id', $user->id)->where('comment_id', $this->comment_id)->first()) {
+            if (Commentlike::where('user_id', $user->id)->where('comment_id', $this->id)->first()) {
                 return true;
             }
         }

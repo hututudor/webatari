@@ -17,6 +17,9 @@ Route::get('user/{id}', 'UserController@get');
 Route::post('register', 'AuthController@register');
 Route::post('login', 'AuthController@authenticate');
 
+Route::get('pop', 'ProjectController@projectofthedaysim');
+Route::get('potd', 'ProjectController@projectofthedayshow');
+
 Route::get('projects/trending', 'ProjectController@trending');
 Route::get('projects/new', 'ProjectController@newest');
 Route::get('projects/random', 'ProjectController@discovery');
