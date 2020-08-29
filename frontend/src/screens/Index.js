@@ -22,18 +22,21 @@ const Index = () => {
   const [discoverProjects, setDiscoverProjects] = useState(null);
   const [discoverLoading, setDiscoverLoading] = useState(true);
 
+  const [projectOfTheDay, setProjectOfTheDay] = useState(null);
+  const [projectOfTheDayLoading, setProjectOfTheDayLoading] = useState(null);
+
   useEffect(() => {
     Promise.all([
       getTrendingProjects(),
       getNewProjects(),
-      getDiscoverProjects()
+      getDiscoverProjects(),
     ]);
   }, []);
 
   const getTrendingProjects = async () => {
     try {
       const res = await axios.get(config.serverUrl + '/projects/trending', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
       setTrendingProjects(res.data.projects);
       setTrendingLoading(false);
@@ -45,7 +48,7 @@ const Index = () => {
   const getNewProjects = async () => {
     try {
       const res = await axios.get(config.serverUrl + '/projects/new', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
       setNewProjects(res.data.projects);
       setNewLoading(false);
@@ -57,10 +60,22 @@ const Index = () => {
   const getDiscoverProjects = async () => {
     try {
       const res = await axios.get(config.serverUrl + '/projects/random', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
       setDiscoverProjects(res.data.projects);
       setDiscoverLoading(false);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const getProjectOfTheDay = async () => {
+    try {
+      const res = await axios.get(config.serverUrl + '/projects/potd', {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      });
+      setProjectOfTheDay(res.data.project);
+      setProjectOfTheDayLoading(false);
     } catch (e) {
       console.error(e);
     }
@@ -74,7 +89,7 @@ const Index = () => {
         ? newProjects
         : discoverProjects;
 
-    const index = data.findIndex(project => project.uuid === id);
+    const index = data.findIndex((project) => project.uuid === id);
 
     if (index === -1) return;
 
@@ -114,11 +129,22 @@ const Index = () => {
       }
 
       await axios.get(url, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
     } catch (e) {
       console.error(e);
     }
+  };
+
+  const likeProjectOfTheDay = async (value) => {
+    const increase = value ? 1 : -1;
+    setProjectOfTheDay({
+      ...projectOfTheDay,
+      likes: projectOfTheDay.likes + increase,
+      liked: value,
+    });
+
+    like('project of the day', -1, value);
   };
 
   return (
@@ -127,11 +153,36 @@ const Index = () => {
         <Hero />
 
         <div className="section">
+          <div className="title">Project of the day</div>
+          <div className="cards">
+            {!projectOfTheDayLoading && projectOfTheDay && (
+              <Project
+                project={projectOfTheDay}
+                className="project"
+                onLike={(id, value) => likeProjectOfTheDay(value)}
+              />
+            )}
+            {projectOfTheDayLoading && (
+              <PulseLoader
+                size={16}
+                loading={true}
+                color={colors.cool_grey_050}
+              />
+            )}
+            {!projectOfTheDayLoading && !projectOfTheDay && (
+              <div className="empty">
+                Looks kind of empty. How about you create a project yourself?
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="section">
           <div className="title">Trending projects</div>
           <div className="cards">
             {!trendingLoading &&
               trendingProjects &&
-              trendingProjects.map(project => (
+              trendingProjects.map((project) => (
                 <Project
                   key={project.id}
                   project={project}
@@ -160,7 +211,7 @@ const Index = () => {
           <div className="cards">
             {!newLoading &&
               newProjects &&
-              newProjects.map(project => (
+              newProjects.map((project) => (
                 <Project
                   key={project.id}
                   project={project}
@@ -189,7 +240,7 @@ const Index = () => {
           <div className="cards">
             {!discoverLoading &&
               discoverProjects &&
-              discoverProjects.map(project => (
+              discoverProjects.map((project) => (
                 <Project
                   key={project.id}
                   project={project}
