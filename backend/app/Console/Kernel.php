@@ -26,7 +26,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->call(ProjectController::projectoftheday())->daily();
+        $schedule->call(function() {
+            ProjectController::projectoftheday();
+        })->daily();
     }
 
     /**
