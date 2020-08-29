@@ -152,7 +152,7 @@ class   ProjectController extends Controller
 
         $comments = Comment::where('project_id', $project->id)->get();
         foreach($comments as $comment){
-            $commentcreator = User::where('user_id', $comment->user_id)->first();
+            $commentcreator = User::where('id', $comment->user_id)->first();
             $commentcreator->likes = $commentcreator->likes - $comment->likes;
             $commentcreator->save();
             $comment->delete();
