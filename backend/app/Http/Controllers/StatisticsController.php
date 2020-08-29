@@ -22,6 +22,7 @@ class StatisticsController extends Controller
         $lines=0;
         foreach($projectsclass as $project){
             $code = $project->code;
+            $lines = $lines +1;
             $lines= $lines + substr_count( $code, PHP_EOL );
         }
         $stats=[
