@@ -102,7 +102,7 @@ class UserController extends Controller
         return response()->json(compact('user'), 200);
     }
 
-    public function Leaderboard(){
+    public function leaderboard(){
         $sort = User::all()->sortByDesc('likes')->take(10)->values();
         return response()->json(compact('sort'), 200);
     }

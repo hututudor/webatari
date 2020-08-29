@@ -33,7 +33,9 @@ Route::get('comments/project/{uuid}', 'CommentController@projectget');
 Route::get('comments/user/{id}', 'CommentController@userget');
 Route::get('comments/{id}', 'CommentController@get');
 
-Route::get('leaderboard', 'UserController@Leaderboard');
+Route::get('leaderboard', 'UserController@leaderboard');
+Route::get('stats', 'StatisticsController@statistics');
+
 
 // middleware for auth-only routes
 Route::group(['middleware' => ['jwt.verify']], function () {
