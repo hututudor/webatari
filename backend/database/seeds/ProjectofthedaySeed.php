@@ -11,8 +11,7 @@ class ProjectofthedaySeed extends Seeder
      */
     public function run()
     {
-        DB::table('projectofthedays')->insert([
-            'uuid' => 0,
-        ]);
+       $project = new \App\Projectoftheday();
+       $project->save();
     }
 }
