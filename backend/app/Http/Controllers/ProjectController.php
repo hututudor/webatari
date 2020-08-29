@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Webpatser\Uuid\Uuid;
 
-class ProjectController extends Controller
+class   ProjectController extends Controller
 {
 
     public function getRom($id)
@@ -257,9 +257,7 @@ class ProjectController extends Controller
         $result = array_count_values(explode(',', $array));
         arsort($result);
         $keys = array_keys($result);
-        foreach(Projectoftheday::all() as $p){
-          $p->uuid = $keys[0];
-        }
+        DB::table('projectofthedays')->where('id', 1)->update(['uuid' => $keys[0]]);
         return $keys[0];
     }
 
