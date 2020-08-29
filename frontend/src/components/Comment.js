@@ -20,8 +20,8 @@ const Comment = ({ comment, className, onLike, onEdit, onDelete }) => {
   return (
     <Wrapper className={className}>
       <div className="description">
-        {comment.description}{' '}
-        {comment.edited && <span className="edited">(edited)</span>}
+        {comment.description}
+        {comment.edited === true && <span className="edited">(edited)</span>}
       </div>
       <div className="footer">
         <div

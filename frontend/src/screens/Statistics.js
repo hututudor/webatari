@@ -1,18 +1,13 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { PulseLoader } from 'react-spinners';
 import axios from 'axios';
 
 import PageWrapper from '../components/PageWrapper';
-import Hero from '../components/Hero';
-import User from '../components/User';
 import { colors } from '../config/theme';
 import config from '../config/config';
-import AuthContext from '../utils/AuthContext';
 
-const Index = () => {
-  const authContext = useContext(AuthContext.Context);
-
+const Statistics = () => {
   const [stats, setStats] = useState({});
   const [statsLoading, setStatsLoading] = useState(true);
 
@@ -145,4 +140,4 @@ const Wrapper = styled.div`
   }
 `;
 
-export default Index;
+export default Statistics;

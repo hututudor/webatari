@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
 
 import Modal from './Modal';
 import { DangerButton, SecondaryButton } from '../components/Button';
@@ -11,7 +10,6 @@ import { toast } from 'react-toastify';
 
 const DeleteCommentModal = ({ visible, onClose, comment, onDone }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const history = useHistory();
 
   const onSubmit = async () => {
     setIsSubmitting(true);

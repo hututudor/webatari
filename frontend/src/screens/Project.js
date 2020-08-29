@@ -143,8 +143,6 @@ const Project = () => {
     }
   };
 
-  const clone = () => {};
-
   const save = async () => {
     try {
       toast.success('Saving...');
@@ -320,10 +318,7 @@ const Project = () => {
                 </div>
                 {authContext.isLoggedIn() && (
                   <div className="row">
-                    <PrimaryButton
-                      onClick={clone}
-                      onClick={() => setCloneModalOpen(true)}
-                    >
+                    <PrimaryButton onClick={() => setCloneModalOpen(true)}>
                       Clone project
                     </PrimaryButton>
                   </div>
