@@ -11,13 +11,14 @@ import Settings from '../screens/Settings';
 import Project from '../screens/Project';
 import About from '../screens/About';
 import Search from '../screens/Search';
+import Leaderboard from '../screens/Leaderboard';
 
 import AuthContext from '../utils/AuthContext';
 import User from '../screens/User';
 
 toast.configure({
   position: toast.POSITION.BOTTOM_RIGHT,
-  className: 'toast'
+  className: 'toast',
 });
 
 const Root = () => (
@@ -48,6 +49,9 @@ const Root = () => (
         </Route>
         <Route exact path="/settings">
           <Settings />
+        </Route>
+        <Route exact path="/leaderboard">
+          <Leaderboard />
         </Route>
         <Route>
           <NotFound />
