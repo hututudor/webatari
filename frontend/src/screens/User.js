@@ -232,7 +232,12 @@ const User = () => {
               />
             )}
             {!loadingComments && comments.length === 0 && (
-              <div className="empty">This user does not have any comments.</div>
+              <div className="comments">
+                <div className="title">Comments ({comments.length})</div>
+                <div className="empty">
+                  This user does not have any comments.
+                </div>
+              </div>
             )}
             {!loadingComments && comments.length !== 0 && (
               <div className="comments">

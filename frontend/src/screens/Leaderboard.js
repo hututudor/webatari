@@ -22,10 +22,10 @@ const Index = () => {
 
   const getTrendingProjects = async () => {
     try {
-      const res = await axios.get(config.serverUrl + '/users/liked', {
+      const res = await axios.get(config.serverUrl + '/leaderboard', {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
-      setLikedUsers(res.data.users);
+      setLikedUsers(res.data.sort);
       setLikedUsersLoading(false);
     } catch (e) {
       console.error(e);

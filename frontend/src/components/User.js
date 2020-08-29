@@ -26,6 +26,19 @@ const Wrapper = styled.div`
   padding: 16px;
   background: ${colors.cool_grey_800};
 
+  > .likes {
+    display: flex;
+    align-items: center;
+
+    > .heart {
+      margin-right: 6px;
+      height: 24px;
+      width: 24px;
+
+      fill: ${colors.cool_grey_900};
+    }
+  }
+
   .title {
     color: ${colors.blue_vivid_100};
     margin-bottom: 8px;

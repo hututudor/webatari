@@ -22,7 +22,7 @@ const Navbar = () => {
           Leaderboard
         </NavLink>
         <NavLink className="link" exact to="/stats">
-          statistics
+          Statistics
         </NavLink>
         <NavLink className="link" exact to="/about">
           About
