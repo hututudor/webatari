@@ -6,33 +6,86 @@ import { PulseLoader } from 'react-spinners';
 import dasm from 'dasm';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import * as Yup from 'yup';
+import { Formik } from 'formik';
 
 import PageWrapper from '../components/PageWrapper';
 import {
   DangerButton,
   PrimaryButton,
-  WarningButton
+  WarningButton,
 } from '../components/Button';
+import TextArea from '../components/TextArea';
+import Comment from '../components/Comment';
 import { colors } from '../config/theme';
 import AuthContext from '../utils/AuthContext';
 import config from '../config/config';
 import DeleteProjectModal from '../modals/DeleteProjectModal';
 import EditProjectModal from '../modals/EditProjectModal';
+import EditCommentModal from '../modals/EditCommentModal';
+import DeleteCommentModal from '../modals/DeleteCommentModal';
+import { likeComment } from '../utils/likeComment';
+
+const validationSchema = Yup.object().shape({
+  comment: Yup.string().required('Comment is required'),
+});
+
+const comments_mock = [
+  {
+    id: 5,
+    user: {
+      name: 'Tudor',
+      id: '2',
+    },
+    description: 'my post',
+    likes: 1,
+    liked: true,
+  },
+  {
+    id: 2,
+    user: {
+      name: 'Tudor',
+      id: '2',
+    },
+    description: 'my post',
+    likes: 3,
+    liked: true,
+  },
+  {
+    id: 9,
+    user: {
+      name: 'Tudor',
+      id: '2',
+    },
+    description: 'my post',
+    likes: 0,
+    liked: false,
+  },
+];
 
 const Project = () => {
   const authContext = useContext(AuthContext.Context);
   const [project, setProject] = useState(null);
+  const [comments, setComments] = useState([]);
   const [oldCode, setOldCode] = useState('');
   const [loading, setLoading] = useState(true);
+  const [loadingComments, setLoadingComments] = useState(true);
   const [compiling, setCompiling] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
+
+  const [editCommentModalOpen, setEditCommentModalOpen] = useState(false);
+  const [editCommentModalData, setEditCommentModalData] = useState({});
+
+  const [deleteCommentModalOpen, setDeleteCommentModalOpen] = useState(false);
+  const [deleteCommentModalData, setDeleteCommentModalData] = useState('');
 
   const { id } = useParams();
   const history = useHistory();
 
   useEffect(() => {
     getProject();
+    getComments();
   }, []);
 
   const getProject = async () => {
@@ -47,6 +100,18 @@ const Project = () => {
     }
   };
 
+  const getComments = async () => {
+    try {
+      const res = await axios.get(config.serverUrl + '/comments/' + id);
+      setComments(res.data.comments);
+      setLoadingComments(false);
+    } catch (e) {
+      console.error(e);
+      setLoadingComments(false);
+      setComments(comments_mock);
+    }
+  };
+
   const hasCodeChanged = () => {
     return oldCode !== project.code;
   };
@@ -56,7 +121,7 @@ const Project = () => {
     const result = dasm(project.code, {
       format: 3,
       quick: true,
-      machine: 'atari2600'
+      machine: 'atari2600',
     });
     const ROM = result.data;
     console.log(ROM);
@@ -75,10 +140,10 @@ const Project = () => {
       await axios.post(
         config.serverUrl + '/projects/compile/' + project.uuid,
         {
-          data
+          data,
         },
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         }
       );
     } catch (e) {
@@ -112,10 +177,10 @@ const Project = () => {
       await axios.put(
         config.serverUrl + '/projects/editcode/' + project.uuid,
         {
-          code: project.code
+          code: project.code,
         },
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         }
       );
       toast.success('Saved');
@@ -132,9 +197,77 @@ const Project = () => {
     );
   };
 
+  const onSubmit = async (values, { setSubmitting }) => {
+    setSubmitting(true);
+
+    try {
+      const res = await axios.post(
+        config.serverUrl + `/comments`,
+        {
+          name: values.name,
+          description: values.description,
+        },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        }
+      );
+
+      toast.success('Comment added!');
+    } catch (e) {
+      console.error(e);
+      toast.error('Something went wrong, please try again');
+    }
+
+    setSubmitting(false);
+  };
+
+  const handleCommentEdit = (comment) => () => {
+    setEditCommentModalData(comment);
+    setEditCommentModalOpen(true);
+  };
+
+  const handleCommentDelete = (comment) => () => {
+    console.log('del');
+    setDeleteCommentModalData(comment);
+    setDeleteCommentModalOpen(true);
+  };
+
   return (
     <PageWrapper>
       <Wrapper>
+        <EditCommentModal
+          visible={editCommentModalOpen}
+          onClose={() => {
+            setEditCommentModalOpen(false);
+          }}
+          onDone={({ comment, id }) => {
+            setEditCommentModalOpen(false);
+            const newComments = [...comments];
+            const commentIndex = comments.findIndex((comm) => comm.id === id);
+
+            if (commentIndex === -1) {
+              return;
+            }
+
+            newComments[commentIndex].description = comment;
+
+            setComments([...newComments]);
+          }}
+          comment={editCommentModalData}
+        />
+
+        <DeleteCommentModal
+          visible={deleteCommentModalOpen}
+          onClose={() => setDeleteModalOpen(false)}
+          onDone={({ comment, id }) => {
+            setDeleteCommentModalOpen(false);
+            const newComments = [...comments].filter(
+              (comm) => comment.id !== comm.id
+            );
+            setComments([...newComments]);
+          }}
+          comment={deleteCommentModalData}
+        />
         {!loading && project && (
           <>
             {isAuthor() && (
@@ -164,7 +297,7 @@ const Project = () => {
                   mode: '6502',
                   theme: 'ayu-mirage',
                   lineNumbers: true,
-                  readOnly: !isAuthor()
+                  readOnly: !isAuthor(),
                 }}
                 onBeforeChange={(editor, data, value) => {
                   setProject({ ...project, code: value });
@@ -203,6 +336,49 @@ const Project = () => {
                   </div>
                 )}
               </div>
+              <div className="add-comment">
+                <Formik
+                  initialValues={{
+                    name: '',
+                    email: '',
+                  }}
+                  enableReinitialize={true}
+                  onSubmit={onSubmit}
+                  validationSchema={validationSchema}
+                >
+                  {({
+                    values,
+                    errors,
+                    touched,
+                    handleChange,
+                    handleBlur,
+                    handleSubmit,
+                    isSubmitting,
+                  }) => (
+                    <>
+                      <TextArea
+                        autoComplete={false}
+                        type="text"
+                        placeholder="Comment"
+                        name="comment"
+                        mb="0"
+                        error={touched.comment ? errors.comment : null}
+                        value={values.comment}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                      <div className="actions">
+                        <PrimaryButton
+                          onClick={handleSubmit}
+                          disabled={isSubmitting}
+                        >
+                          Post your comment
+                        </PrimaryButton>
+                      </div>
+                    </>
+                  )}
+                </Formik>
+              </div>
             </div>
           </>
         )}
@@ -218,16 +394,65 @@ const Project = () => {
           <div className="empty">This project does not seem to exist.</div>
         )}
       </Wrapper>
+      <CommentsWrapper>
+        {loadingComments && (
+          <PulseLoader
+            size={16}
+            loading={true}
+            color={colors.cool_grey_050}
+            className="loader"
+          />
+        )}
+        {!loadingComments && comments.length === 0 && (
+          <div className="empty">
+            This project does not seem to have any comments.
+          </div>
+        )}
+        {!loadingComments && comments.length !== 0 && (
+          <div className="comments">
+            <div className="title">Comments ({comments.length})</div>
+            {comments.map((comment) => (
+              <Comment
+                comment={comment}
+                onLike={likeComment(comments, setComments)}
+                onEdit={handleCommentEdit(comment)}
+                onDelete={handleCommentDelete(comment)}
+              ></Comment>
+            ))}
+          </div>
+        )}
+      </CommentsWrapper>
     </PageWrapper>
   );
 };
 
+const CommentsWrapper = styled.div`
+  margin: 64px 128px;
+  width: calc(100% - 2 * 128px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+
+  .comments > div {
+    margin-bottom: 16px;
+  }
+
+  .comments > .title {
+    font-size: 24px;
+    margin-bottom: 24px;
+  }
+`;
+
 const Wrapper = styled.div`
   margin: 64px 128px;
   width: calc(100% - 2 * 128px);
-  height: calc(100vh - 2 * 48px - 2 * 64px);
+  height: calc(100vh - 2 * 48px - 2 * 64px - 150px);
   display: flex;
   justify-content: space-around;
+
+  .add-comment {
+    margin-top: 5rem;
+  }
 
   .column {
     width: 50%;
@@ -277,7 +502,7 @@ const Wrapper = styled.div`
 
   .codemirror,
   .codemirror > div {
-    height: 100% !important;
+    height: 600px;
     font-family: 'Press Start 2P', serif !important;
     line-height: 1.5 !important;
     font-size: 12px;
