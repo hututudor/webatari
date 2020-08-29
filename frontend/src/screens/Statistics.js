@@ -49,26 +49,36 @@ const Index = () => {
                     <div className="description">Lines of code written</div>
                   </div>
                   <div className="card">
-                    <div className="title">{stats.weeklyprojects || 0}</div>
-                    <div className="description">New projects this week</div>
-                  </div>
-                  <div className="card">
-                    <div className="title">{stats.weeklycomments || 0}</div>
-                    <div className="description">New comments this week</div>
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="card">
                     <div className="title">{stats.users || 0}</div>
                     <div className="description">Users in total</div>
                   </div>
+                </div>
+                <div className="row">
                   <div className="card">
                     <div className="title">{stats.projects || 0}</div>
                     <div className="description">Projects in total</div>
                   </div>
                   <div className="card">
+                    <div className="title">{stats.dailyprojects || 0}</div>
+                    <div className="description">Projects today</div>
+                  </div>
+                  <div className="card">
+                    <div className="title">{stats.weeklyprojects || 0}</div>
+                    <div className="description">Projects weekly</div>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="card">
                     <div className="title">{stats.comments || 0}</div>
-                    <div className="description">Comment in total</div>
+                    <div className="description">Comments in total</div>
+                  </div>
+                  <div className="card">
+                    <div className="title">{stats.dailycomments || 0}</div>
+                    <div className="description">Comments today</div>
+                  </div>
+                  <div className="card">
+                    <div className="title">{stats.weeklycomments || 0}</div>
+                    <div className="description">Comments this week</div>
                   </div>
                 </div>
               </div>
