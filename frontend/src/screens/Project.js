@@ -172,7 +172,7 @@ const Project = () => {
     );
   };
 
-  const onSubmit = async (values, { setSubmitting, setValues }) => {
+  const onSubmit = async (values, { setSubmitting, resetForm }) => {
     setSubmitting(true);
 
     try {
@@ -199,7 +199,7 @@ const Project = () => {
       toast.error('Something went wrong, please try again');
     }
 
-    setValues('comment', '');
+    resetForm({ values: '' });
     setSubmitting(false);
   };
 
@@ -345,8 +345,7 @@ const Project = () => {
               <div className="add-comment">
                 <Formik
                   initialValues={{
-                    name: '',
-                    email: '',
+                    comment: '',
                   }}
                   enableReinitialize={true}
                   onSubmit={onSubmit}

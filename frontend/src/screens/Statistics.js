@@ -45,30 +45,30 @@ const Index = () => {
               <div className="cards">
                 <div className="row">
                   <div className="card">
-                    <div className="title">200</div>
-                    <div className="description">lines of code written</div>
+                    <div className="title">{stats.lines || 0}</div>
+                    <div className="description">Lines of code written</div>
                   </div>
                   <div className="card">
-                    <div className="title">200</div>
-                    <div className="description">lines of code written</div>
+                    <div className="title">{stats.weeklyprojects || 0}</div>
+                    <div className="description">New projects this week</div>
                   </div>
                   <div className="card">
-                    <div className="title">200</div>
-                    <div className="description">lines of code written</div>
+                    <div className="title">{stats.weeklycomments || 0}</div>
+                    <div className="description">New comments this week</div>
                   </div>
                 </div>
                 <div className="row">
                   <div className="card">
-                    <div className="title">200</div>
-                    <div className="description">lines of code written</div>
+                    <div className="title">{stats.users || 0}</div>
+                    <div className="description">Users in total</div>
                   </div>
                   <div className="card">
-                    <div className="title">200</div>
-                    <div className="description">lines of code written</div>
+                    <div className="title">{stats.projects || 0}</div>
+                    <div className="description">Projects in total</div>
                   </div>
                   <div className="card">
-                    <div className="title">200</div>
-                    <div className="description">lines of code written</div>
+                    <div className="title">{stats.comments || 0}</div>
+                    <div className="description">Comment in total</div>
                   </div>
                 </div>
               </div>
@@ -95,7 +95,7 @@ const Wrapper = styled.div`
   }
 
   .card {
-    padding: 16px;
+    padding: 24px;
     background: ${colors.cool_grey_800};
     text-align: center;
     width: 100%;
