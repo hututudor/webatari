@@ -15,8 +15,10 @@ class StatisticsController extends Controller
         $users = User::all()->count();
         $projects = Project::all()->count();
         $comments = Comment::all()->count();
-        $weeklyprojects = Project::where('created_at', '>=', Carbon::now()->isLastWeek())->get()->count();
-        $weeklycomments = Comment::where('created_at', '>=', Carbon::now()->isLastWeek())->get()->count();
+        $weeklyprojects = Project::where('created_at', '>=', Carbon::now()->subWeek())->get()->count();
+        $weeklycomments = Comment::where('created_at', '>=', Carbon::now()->subWeek())->get()->count();
+        $dailyprojects = Project::where('created_at', '>=', Carbon::now()->subDay())->get()->count();
+        $dailycomments = Comment::where('created_at', '>=', Carbon::now()->subWeek())->get()->count();
 
         $projectsclass = Project::all();
         $lines=0;
@@ -31,7 +33,9 @@ class StatisticsController extends Controller
             'comments' => $comments,
             'weeklyprojects' => $weeklyprojects,
             'weeklycomments' => $weeklycomments,
-            'lines' => $lines
+            'lines' => $lines,
+            'dailyprojects' => $dailyprojects,
+            'dailycomments' => $dailycomments
             ];
 
         return response()->json(compact('stats'), 200);
