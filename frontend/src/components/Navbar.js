@@ -51,6 +51,7 @@ const Wrapper = styled.div`
   align-items: flex-start;
   padding: 0 64px;
   background: ${colors.cool_grey_800};
+  z-index: 10000;
 
   .group {
     display: flex;

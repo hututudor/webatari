@@ -3,6 +3,10 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import moment from 'moment';
+import { Formik } from 'formik';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import * as Yup from 'yup';
 
 import { colors } from '../config/theme';
 import heart_black from '../assets/heart_black.svg';
@@ -97,11 +101,11 @@ const Wrapper = styled.div`
 Project.propTypes = {
   project: PropTypes.object.isRequired,
   className: PropTypes.string,
-  onLike: PropTypes.func.isRequired
+  onLike: PropTypes.func.isRequired,
 };
 
 Project.defaultProps = {
-  className: ''
+  className: '',
 };
 
 export default Project;

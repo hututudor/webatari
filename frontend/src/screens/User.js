@@ -3,21 +3,34 @@ import styled from 'styled-components';
 import { PulseLoader } from 'react-spinners';
 import { useParams, useHistory } from 'react-router-dom';
 import moment from 'moment';
+import axios from 'axios';
 
 import PageWrapper from '../components/PageWrapper';
 import Project from '../components/Project';
 import { colors } from '../config/theme';
 import config from '../config/config';
-import axios from 'axios';
 import { PrimaryButton } from '../components/Button';
 import AddProjectModal from '../modals/AddProjectModal';
+import EditCommentModal from '../modals/EditCommentModal';
+import DeleteCommentModal from '../modals/DeleteCommentModal';
+import Comment from '../components/Comment';
 import AuthContext from '../utils/AuthContext';
+import { likeComment } from '../utils/likeComment';
 
 const User = () => {
   const [addModalOpen, setAddModalOpen] = useState(false);
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const [comments, setComments] = useState([]);
+  const [loadingComments, setLoadingComments] = useState(true);
+
+  const [editCommentModalOpen, setEditCommentModalOpen] = useState(false);
+  const [editCommentModalData, setEditCommentModalData] = useState({});
+
+  const [deleteCommentModalOpen, setDeleteCommentModalOpen] = useState(false);
+  const [deleteCommentModalData, setDeleteCommentModalData] = useState('');
 
   const { id } = useParams();
   const history = useHistory();
@@ -26,6 +39,7 @@ const User = () => {
 
   useEffect(() => {
     getUser();
+    getComments();
   }, [id]);
 
   const getUser = async () => {
@@ -34,8 +48,8 @@ const User = () => {
       const [userRes, projectsRes] = await Promise.all([
         axios.get(config.serverUrl + '/user/' + id),
         axios.get(config.serverUrl + '/projects/user/' + id, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-        })
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        }),
       ]);
       const user = userRes.data.user;
       const projects = projectsRes.data.projects;
@@ -46,11 +60,22 @@ const User = () => {
     }
   };
 
+  const getComments = async () => {
+    try {
+      const res = await axios.get(config.serverUrl + '/comments/user/' + id);
+      setComments(res.data.comments);
+      setLoadingComments(false);
+    } catch (e) {
+      console.error(e);
+      setLoadingComments(false);
+    }
+  };
+
   const like = async (projectId, value) => {
     if (!authContext.isLoggedIn()) return;
 
     const index = user.projects.findIndex(
-      project => project.uuid === projectId
+      (project) => project.uuid === projectId
     );
 
     if (index === -1) return;
@@ -75,23 +100,67 @@ const User = () => {
       }
 
       await axios.get(url, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
     } catch (e) {
       console.error(e);
     }
   };
 
+  const handleCommentEdit = (comment) => () => {
+    setEditCommentModalData(comment);
+    setEditCommentModalOpen(true);
+  };
+
+  const handleCommentDelete = (comment) => () => {
+    console.log('del');
+    setDeleteCommentModalData(comment);
+    setDeleteCommentModalOpen(true);
+  };
+
   return (
     <PageWrapper>
       <Wrapper>
+        <EditCommentModal
+          visible={editCommentModalOpen}
+          onClose={() => {
+            setEditCommentModalOpen(false);
+          }}
+          onDone={({ comment, id }) => {
+            setEditCommentModalOpen(false);
+            const newComments = [...comments];
+            const commentIndex = comments.findIndex((comm) => comm.id === id);
+
+            if (commentIndex === -1) {
+              return;
+            }
+
+            newComments[commentIndex].description = comment;
+
+            setComments([...newComments]);
+          }}
+          comment={editCommentModalData}
+        />
+
+        <DeleteCommentModal
+          visible={deleteCommentModalOpen}
+          onClose={() => setDeleteCommentModalOpen(false)}
+          onDone={({ comment, id }) => {
+            setDeleteCommentModalOpen(false);
+            const newComments = [...comments].filter(
+              (comm) => comment.id !== comm.id
+            );
+            setComments([...newComments]);
+          }}
+          comment={deleteCommentModalData}
+        />
         <div className={`wrapper ${loading ? 'loading' : ''}`}>
           {!loading && user && (
             <>
               <AddProjectModal
                 visible={addModalOpen}
                 onClose={() => setAddModalOpen(false)}
-                onDone={id => {
+                onDone={(id) => {
                   setAddModalOpen(false);
                   history.push('/project/' + id);
                 }}
@@ -122,7 +191,7 @@ const User = () => {
               <div className="section">
                 <div className="title">Projects ({user.projects.length})</div>
                 <div className="cards">
-                  {user.projects.map(project => (
+                  {user.projects.map((project) => (
                     <Project
                       key={project.id}
                       project={project}
@@ -139,17 +208,45 @@ const User = () => {
               </div>
             </>
           )}
-          {loading && (
-            <PulseLoader
-              size={16}
-              loading={true}
-              color={colors.cool_grey_050}
-              className="loader"
-            />
-          )}
-          {!loading && !user && (
-            <div className="empty">This user does not seem to exist.</div>
-          )}
+
+          <div className={`comms ${loadingComments ? 'loading' : ''}`}>
+            {loading && (
+              <PulseLoader
+                size={16}
+                loading={true}
+                color={colors.cool_grey_050}
+                className="loader"
+              />
+            )}
+            {!loading && !user && (
+              <div className="empty">This user does not seem to exist.</div>
+            )}
+
+            {loadingComments && (
+              <PulseLoader
+                size={16}
+                loading={true}
+                color={colors.cool_grey_050}
+                className="loader"
+              />
+            )}
+            {!loadingComments && comments.length === 0 && (
+              <div className="empty">This user does not have any comments.</div>
+            )}
+            {!loadingComments && comments.length !== 0 && (
+              <div className="comments">
+                <div className="title">Comments ({comments.length})</div>
+                {comments.map((comment) => (
+                  <Comment
+                    comment={comment}
+                    onLike={likeComment(comments, setComments)}
+                    onEdit={handleCommentEdit(comment)}
+                    onDelete={handleCommentDelete(comment)}
+                  ></Comment>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </Wrapper>
     </PageWrapper>
@@ -157,6 +254,22 @@ const User = () => {
 };
 
 const Wrapper = styled.div`
+  .comms {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+  }
+
+  .comments > div {
+    margin-bottom: 16px;
+  }
+
+  .comments > .title {
+    font-size: 24px;
+    margin-bottom: 24px;
+  }
+
   .wrapper {
     margin: 64px 256px;
     width: calc(100% - 2 * 256px);

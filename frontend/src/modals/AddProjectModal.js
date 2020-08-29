@@ -14,7 +14,7 @@ import TextArea from '../components/TextArea';
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required('Name is required'),
-  description: Yup.string().required('Description is required')
+  description: Yup.string().required('Description is required'),
 });
 
 const AddProjectModal = ({ visible, onClose, onDone }) => {
@@ -29,10 +29,10 @@ const AddProjectModal = ({ visible, onClose, onDone }) => {
         config.serverUrl + `/projects`,
         {
           name: values.name,
-          description: values.description
+          description: values.description,
         },
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         }
       );
 
@@ -52,7 +52,7 @@ const AddProjectModal = ({ visible, onClose, onDone }) => {
         <Formik
           initialValues={{
             name: '',
-            email: ''
+            email: '',
           }}
           enableReinitialize={true}
           onSubmit={onSubmit}
@@ -65,7 +65,7 @@ const AddProjectModal = ({ visible, onClose, onDone }) => {
             handleChange,
             handleBlur,
             handleSubmit,
-            isSubmitting
+            isSubmitting,
           }) => (
             <>
               <div className="title">Create project</div>
