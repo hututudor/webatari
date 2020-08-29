@@ -15,6 +15,8 @@ const Comment = ({ comment, className, onLike, onEdit, onDelete }) => {
   const history = useHistory();
   const authContext = useContext(AuthContext.Context);
 
+  console.log(comment.id);
+
   return (
     <Wrapper className={className}>
       <div className="description">
@@ -40,16 +42,17 @@ const Comment = ({ comment, className, onLike, onEdit, onDelete }) => {
           />
           {comment.likes}
         </div>
-        {comment.user_id === authContext.state.user.id && (
-          <>
-            <div className="edit" onClick={onEdit}>
-              <img className="edit-icon" src={edit} alt="edit" />
-            </div>
-            <div className="delete" onClick={onDelete}>
-              <img className="delete-icon" src={remove} alt="delete" />
-            </div>
-          </>
-        )}
+        {authContext.isLoggedIn() &&
+          comment.user_id === authContext.state.user.id && (
+            <>
+              <div className="edit" onClick={onEdit}>
+                <img className="edit-icon" src={edit} alt="edit" />
+              </div>
+              <div className="delete" onClick={onDelete}>
+                <img className="delete-icon" src={remove} alt="delete" />
+              </div>
+            </>
+          )}
       </div>
     </Wrapper>
   );

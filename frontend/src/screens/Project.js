@@ -25,6 +25,7 @@ import EditProjectModal from '../modals/EditProjectModal';
 import EditCommentModal from '../modals/EditCommentModal';
 import DeleteCommentModal from '../modals/DeleteCommentModal';
 import { likeComment } from '../utils/likeComment';
+import CloneProjectModal from '../modals/CloneProjectModal';
 
 const validationSchema = Yup.object().shape({
   comment: Yup.string().required('Comment is required'),
@@ -40,6 +41,7 @@ const Project = () => {
   const [compiling, setCompiling] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [cloneModalOpen, setCloneModalOpen] = useState(false);
 
   const [editCommentModalOpen, setEditCommentModalOpen] = useState(false);
   const [editCommentModalData, setEditCommentModalData] = useState({});
@@ -135,6 +137,8 @@ const Project = () => {
       );
     }
   };
+
+  const clone = () => {};
 
   const save = async () => {
     try {
@@ -241,8 +245,21 @@ const Project = () => {
           }}
           comment={deleteCommentModalData}
         />
+
         {!loading && project && (
           <>
+            {authContext.isLoggedIn() && (
+              <CloneProjectModal
+                visible={cloneModalOpen}
+                onClose={() => {
+                  setCloneModalOpen(false);
+                }}
+                onDone={({ name, description }) => {
+                  setCloneModalOpen(false);
+                }}
+                project={project}
+              />
+            )}
             {isAuthor() && (
               <>
                 <DeleteProjectModal
@@ -295,6 +312,16 @@ const Project = () => {
                     {hasCodeChanged() && 'Compile & '} Run
                   </PrimaryButton>
                 </div>
+                {authContext.isLoggedIn() && (
+                  <div className="row">
+                    <PrimaryButton
+                      onClick={clone}
+                      onClick={() => setCloneModalOpen(true)}
+                    >
+                      Clone project
+                    </PrimaryButton>
+                  </div>
+                )}
                 {isAuthor() && (
                   <div className="row">
                     <PrimaryButton disabled={!hasCodeChanged()} onClick={save}>
