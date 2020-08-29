@@ -12,6 +12,7 @@ import Project from '../screens/Project';
 import About from '../screens/About';
 import Search from '../screens/Search';
 import Leaderboard from '../screens/Leaderboard';
+import Statistics from '../screens/Statistics';
 
 import AuthContext from '../utils/AuthContext';
 import User from '../screens/User';
@@ -52,6 +53,9 @@ const Root = () => (
         </Route>
         <Route exact path="/leaderboard">
           <Leaderboard />
+        </Route>
+        <Route exact path="/stats">
+          <Statistics />
         </Route>
         <Route>
           <NotFound />

@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 
 import { colors } from '../config/theme';
+import heart_red from '../assets/heart_red.svg';
 
 const User = ({ user, className }) => {
   const history = useHistory();
@@ -12,6 +13,10 @@ const User = ({ user, className }) => {
     <Wrapper className={className}>
       <div className="title" onClick={() => history.push(`/user/${user.id}`)}>
         {user.name}
+      </div>
+      <div className="likes">
+        <img className="heart" src={heart_red} alt="heart" />
+        {user.likes}
       </div>
     </Wrapper>
   );
@@ -34,11 +39,13 @@ const Wrapper = styled.div`
 
 User.propTypes = {
   user: PropTypes.object.isRequired,
-  className: PropTypes.string
+  className: PropTypes.string,
+  showLikes: PropTypes.bool,
 };
 
 User.defaultProps = {
-  className: ''
+  className: '',
+  showLikes: false,
 };
 
 export default User;

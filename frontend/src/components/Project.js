@@ -3,10 +3,6 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import moment from 'moment';
-import { Formik } from 'formik';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import * as Yup from 'yup';
 
 import { colors } from '../config/theme';
 import heart_black from '../assets/heart_black.svg';
