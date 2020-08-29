@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Comment;
 use App\Commentlike;
 use App\Like;
 use App\Project;
@@ -143,6 +144,20 @@ class   ProjectController extends Controller
         if ($project->user_id != $user->id) {
             return response()->json('', 403);
         }
+
+        $creator_id = $project->user_id;
+        $creator = User::where('id', $creator_id)->first();
+        $creator->likes = $creator->likes - $project->likes;
+        $creator->save();
+
+        $comments = Comment::where('project_id', $project->id)->get();
+        foreach($comments as $comment){
+            $commentcreator = User::where('user_id', $comment->user_id)->first();
+            $commentcreator->likes = $commentcreator->likes - $comment->likes;
+            $commentcreator->save();
+            $comment->delete();
+        }
+
         $project->delete();
         return response()->json('', 200);
     }
@@ -193,6 +208,11 @@ class   ProjectController extends Controller
         $project->likes = $project->likes + 1;
         $project->save();
 
+        $creator_id = $project->user_id;
+        $creator = User::where('id', $creator_id)->first();
+        $creator->likes =  $creator->likes+1;
+        $creator->save();
+
         return response()->json('', 200);
     }
 
@@ -210,6 +230,11 @@ class   ProjectController extends Controller
         $like->delete();
         $project->likes = $project->likes - 1;
         $project->save();
+
+        $creator_id = $project->user_id;
+        $creator = User::where('id', $creator_id)->first();
+        $creator->likes =  $creator->likes-1;
+        $creator->save();
 
         return response()->json('', 200);
     }

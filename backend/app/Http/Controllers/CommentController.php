@@ -141,6 +141,11 @@ class CommentController extends Controller
         $comment->likes = $comment->likes + 1;
         $comment->save();
 
+        $creator_id = $comment->user_id;
+        $creator = User::where('id', $creator_id)->first();
+        $creator->likes =  $creator->likes+1;
+        $creator->save();
+
         return response()->json('', 200);
     }
 
@@ -160,6 +165,34 @@ class CommentController extends Controller
         $comment->likes = $comment->likes - 1;
         $comment->save();
 
+        $creator_id = $comment->user_id;
+        $creator = User::where('id', $creator_id)->first();
+        $creator->likes =  $creator->likes-1;
+        $creator->save();
+
+        return response()->json('', 200);
+    }
+
+    public function delete($id)
+    {
+        $user = AuthController::getUser();
+        if (!$user) {
+            return response()->json('', 404);
+        }
+        $comment = Comment::where('id', $id)->first();
+        if (!$comment) {
+            return response()->json('', 404);
+        }
+        if ($comment->user_id != $user->id) {
+            return response()->json('', 403);
+        }
+
+        $creator_id = $comment->user_id;
+        $creator = User::where('id', $creator_id)->first();
+        $creator->likes = $creator->likes - $comment->likes;
+        $creator->save();
+
+        $comment->delete();
         return response()->json('', 200);
     }
 }
