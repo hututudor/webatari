@@ -26,8 +26,7 @@ const EditCommentModal = ({ visible, onClose, onDone, comment }) => {
       await axios.put(
         config.serverUrl + `/comments/${comment.id}`,
         {
-          name: values.name,
-          description: values.description,
+          description: values.comment,
         },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },

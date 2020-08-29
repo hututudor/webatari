@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
@@ -9,13 +9,18 @@ import heart_black from '../assets/heart_black.svg';
 import heart_red from '../assets/heart_red.svg';
 import edit from '../assets/edit.svg';
 import remove from '../assets/delete.svg';
+import AuthContext from '../utils/AuthContext';
 
 const Comment = ({ comment, className, onLike, onEdit, onDelete }) => {
   const history = useHistory();
+  const authContext = useContext(AuthContext.Context);
 
   return (
     <Wrapper className={className}>
-      <div className="description">{comment.description}</div>
+      <div className="description">
+        {comment.description}{' '}
+        {comment.edited && <span className="edited">(edited)</span>}
+      </div>
       <div className="footer">
         <div
           className="user"
@@ -35,12 +40,16 @@ const Comment = ({ comment, className, onLike, onEdit, onDelete }) => {
           />
           {comment.likes}
         </div>
-        <div className="edit" onClick={onEdit}>
-          <img className="edit-icon" src={edit} alt="edit" />
-        </div>
-        <div className="delete" onClick={onDelete}>
-          <img className="delete-icon" src={remove} alt="delete" />
-        </div>
+        {comment.user_id === authContext.state.user.id && (
+          <>
+            <div className="edit" onClick={onEdit}>
+              <img className="edit-icon" src={edit} alt="edit" />
+            </div>
+            <div className="delete" onClick={onDelete}>
+              <img className="delete-icon" src={remove} alt="delete" />
+            </div>
+          </>
+        )}
       </div>
     </Wrapper>
   );
@@ -50,6 +59,10 @@ const Wrapper = styled.div`
   padding: 16px;
   background: ${colors.cool_grey_800};
   width: calc(100% - 32px);
+
+  .edited {
+    color: ${colors.yellow_vivid_500};
+  }
 
   .description {
     margin-bottom: 12px;

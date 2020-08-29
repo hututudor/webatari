@@ -30,39 +30,6 @@ const validationSchema = Yup.object().shape({
   comment: Yup.string().required('Comment is required'),
 });
 
-const comments_mock = [
-  {
-    id: 5,
-    user: {
-      name: 'Tudor',
-      id: '2',
-    },
-    description: 'my post',
-    likes: 1,
-    liked: true,
-  },
-  {
-    id: 2,
-    user: {
-      name: 'Tudor',
-      id: '2',
-    },
-    description: 'my post',
-    likes: 3,
-    liked: true,
-  },
-  {
-    id: 9,
-    user: {
-      name: 'Tudor',
-      id: '2',
-    },
-    description: 'my post',
-    likes: 0,
-    liked: false,
-  },
-];
-
 const Project = () => {
   const authContext = useContext(AuthContext.Context);
   const [project, setProject] = useState(null);
@@ -102,13 +69,12 @@ const Project = () => {
 
   const getComments = async () => {
     try {
-      const res = await axios.get(config.serverUrl + '/comments/' + id);
+      const res = await axios.get(config.serverUrl + '/comments/project/' + id);
       setComments(res.data.comments);
       setLoadingComments(false);
     } catch (e) {
       console.error(e);
       setLoadingComments(false);
-      setComments(comments_mock);
     }
   };
 
@@ -197,20 +163,26 @@ const Project = () => {
     );
   };
 
-  const onSubmit = async (values, { setSubmitting }) => {
+  const onSubmit = async (values, { setSubmitting, setValues }) => {
     setSubmitting(true);
 
     try {
       const res = await axios.post(
         config.serverUrl + `/comments`,
         {
-          name: values.name,
-          description: values.description,
+          description: values.comment,
+          id: project.id,
         },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         }
       );
+
+      const newComments = [
+        { ...res.data.comment, user: authContext.state.user },
+        ...comments,
+      ];
+      setComments(newComments);
 
       toast.success('Comment added!');
     } catch (e) {
@@ -218,6 +190,7 @@ const Project = () => {
       toast.error('Something went wrong, please try again');
     }
 
+    setValues('comment', '');
     setSubmitting(false);
   };
 
@@ -258,7 +231,7 @@ const Project = () => {
 
         <DeleteCommentModal
           visible={deleteCommentModalOpen}
-          onClose={() => setDeleteModalOpen(false)}
+          onClose={() => setDeleteCommentModalOpen(false)}
           onDone={({ comment, id }) => {
             setDeleteCommentModalOpen(false);
             const newComments = [...comments].filter(

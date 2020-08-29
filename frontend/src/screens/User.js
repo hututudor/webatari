@@ -11,42 +11,11 @@ import { colors } from '../config/theme';
 import config from '../config/config';
 import { PrimaryButton } from '../components/Button';
 import AddProjectModal from '../modals/AddProjectModal';
+import EditCommentModal from '../modals/EditCommentModal';
+import DeleteCommentModal from '../modals/DeleteCommentModal';
 import Comment from '../components/Comment';
 import AuthContext from '../utils/AuthContext';
 import { likeComment } from '../utils/likeComment';
-
-const comments_mock = [
-  {
-    id: 5,
-    user: {
-      name: 'Tudor',
-      id: '2',
-    },
-    description: 'my post',
-    likes: 1,
-    liked: true,
-  },
-  {
-    id: 2,
-    user: {
-      name: 'Tudor',
-      id: '2',
-    },
-    description: 'my post',
-    likes: 3,
-    liked: true,
-  },
-  {
-    id: 9,
-    user: {
-      name: 'Tudor',
-      id: '2',
-    },
-    description: 'my post',
-    likes: 0,
-    liked: false,
-  },
-];
 
 const User = () => {
   const [addModalOpen, setAddModalOpen] = useState(false);
@@ -56,6 +25,12 @@ const User = () => {
 
   const [comments, setComments] = useState([]);
   const [loadingComments, setLoadingComments] = useState(true);
+
+  const [editCommentModalOpen, setEditCommentModalOpen] = useState(false);
+  const [editCommentModalData, setEditCommentModalData] = useState({});
+
+  const [deleteCommentModalOpen, setDeleteCommentModalOpen] = useState(false);
+  const [deleteCommentModalData, setDeleteCommentModalData] = useState('');
 
   const { id } = useParams();
   const history = useHistory();
@@ -93,7 +68,6 @@ const User = () => {
     } catch (e) {
       console.error(e);
       setLoadingComments(false);
-      setComments(comments_mock);
     }
   };
 
@@ -133,9 +107,53 @@ const User = () => {
     }
   };
 
+  const handleCommentEdit = (comment) => () => {
+    setEditCommentModalData(comment);
+    setEditCommentModalOpen(true);
+  };
+
+  const handleCommentDelete = (comment) => () => {
+    console.log('del');
+    setDeleteCommentModalData(comment);
+    setDeleteCommentModalOpen(true);
+  };
+
   return (
     <PageWrapper>
       <Wrapper>
+        <EditCommentModal
+          visible={editCommentModalOpen}
+          onClose={() => {
+            setEditCommentModalOpen(false);
+          }}
+          onDone={({ comment, id }) => {
+            setEditCommentModalOpen(false);
+            const newComments = [...comments];
+            const commentIndex = comments.findIndex((comm) => comm.id === id);
+
+            if (commentIndex === -1) {
+              return;
+            }
+
+            newComments[commentIndex].description = comment;
+
+            setComments([...newComments]);
+          }}
+          comment={editCommentModalData}
+        />
+
+        <DeleteCommentModal
+          visible={deleteCommentModalOpen}
+          onClose={() => setDeleteCommentModalOpen(false)}
+          onDone={({ comment, id }) => {
+            setDeleteCommentModalOpen(false);
+            const newComments = [...comments].filter(
+              (comm) => comment.id !== comm.id
+            );
+            setComments([...newComments]);
+          }}
+          comment={deleteCommentModalData}
+        />
         <div className={`wrapper ${loading ? 'loading' : ''}`}>
           {!loading && user && (
             <>
@@ -222,6 +240,8 @@ const User = () => {
                   <Comment
                     comment={comment}
                     onLike={likeComment(comments, setComments)}
+                    onEdit={handleCommentEdit(comment)}
+                    onDelete={handleCommentDelete(comment)}
                   ></Comment>
                 ))}
               </div>

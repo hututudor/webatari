@@ -21,7 +21,6 @@ const DeleteCommentModal = ({ visible, onClose, comment, onDone }) => {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
 
-      history.push('/');
       onClose();
       toast.success('Comment removed!');
       onDone({ comment, id: comment.id });
