@@ -26,6 +26,10 @@ Route::get('projects/{uuid}', 'ProjectController@get');
 Route::get('projects', 'ProjectController@getall');
 Route::get('projects/user/{id}', 'ProjectController@getspecific');
 
+Route::get('comments/project/{uuid}', 'CommentController@projectget');
+Route::get('comments/user/{id}', 'CommentController@userget');
+Route::get('comments/{id}', 'CommentController@get');
+
 // middleware for auth-only routes
 Route::group(['middleware' => ['jwt.verify']], function () {
 
@@ -46,5 +50,11 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::put('projects/editcode/{uuid}', 'ProjectController@editcode');
     Route::delete('projects/{uuid}', 'ProjectController@delete');
     Route::post('projects/compile/{id}', 'ProjectController@compile');
+
+    Route::get('comments/dislike/{id}', 'CommentController@dislike');
+    Route::get('comments/like/{id}', 'CommentController@like');
+    Route::post('comments', 'CommentController@add');
+    Route::put('comments/{id}', 'CommentController@edit');
+    Route::delete('comments/{id}', 'CommentController@delete');
 });
 

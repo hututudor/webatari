@@ -5,7 +5,7 @@ namespace App;
 use App\Http\Controllers\AuthController;
 use Illuminate\Database\Eloquent\Model;
 
-class Project extends Model
+class Comment extends Model
 {
     protected $with = ['user'];
     protected $appends = ['liked'];
@@ -15,7 +15,7 @@ class Project extends Model
         $user = AuthController::getAuth();
 
         if ($user) {
-            if (Like::where('user_id', $user->id)->where('project_uuid', $this->uuid)->first()) {
+            if (Commentlike::where('user_id', $user->id)->where('comment_id', $this->comment_id)->first()) {
                 return true;
             }
         }
@@ -23,11 +23,13 @@ class Project extends Model
         return false;
     }
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function comments(){
-        return $this->hasMany(Comment::class);
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
     }
 }
