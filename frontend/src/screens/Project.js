@@ -71,7 +71,12 @@ const Project = () => {
 
   const getComments = async () => {
     try {
-      const res = await axios.get(config.serverUrl + '/comments/project/' + id);
+      const res = await axios.get(
+        config.serverUrl + '/comments/project/' + id,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        }
+      );
       setComments(res.data.comments);
       setLoadingComments(false);
     } catch (e) {
@@ -227,6 +232,7 @@ const Project = () => {
             }
 
             newComments[commentIndex].description = comment;
+            newComments[commentIndex].edited = true;
 
             setComments([...newComments]);
           }}

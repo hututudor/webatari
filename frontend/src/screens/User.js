@@ -136,6 +136,7 @@ const User = () => {
             }
 
             newComments[commentIndex].description = comment;
+            newComments[commentIndex].edited = true;
 
             setComments([...newComments]);
           }}

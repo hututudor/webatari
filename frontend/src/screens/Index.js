@@ -30,6 +30,7 @@ const Index = () => {
       getTrendingProjects(),
       getNewProjects(),
       getDiscoverProjects(),
+      getProjectOfTheDay(),
     ]);
   }, []);
 
@@ -71,7 +72,7 @@ const Index = () => {
 
   const getProjectOfTheDay = async () => {
     try {
-      const res = await axios.get(config.serverUrl + '/projects/potd', {
+      const res = await axios.get(config.serverUrl + '/potd', {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
       setProjectOfTheDay(res.data.project);
@@ -136,7 +137,7 @@ const Index = () => {
     }
   };
 
-  const likeProjectOfTheDay = async (value) => {
+  const likeProjectOfTheDay = async (id, value) => {
     const increase = value ? 1 : -1;
     setProjectOfTheDay({
       ...projectOfTheDay,
@@ -144,7 +145,7 @@ const Index = () => {
       liked: value,
     });
 
-    like('project of the day', -1, value);
+    like('project of the day', id, value);
   };
 
   return (
@@ -159,7 +160,7 @@ const Index = () => {
               <Project
                 project={projectOfTheDay}
                 className="project"
-                onLike={(id, value) => likeProjectOfTheDay(value)}
+                onLike={(id, value) => likeProjectOfTheDay(id, value)}
               />
             )}
             {projectOfTheDayLoading && (
