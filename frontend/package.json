@@ -10,7 +10,7 @@
     "codemirror": "^5.52.0",
     "dasm": "^6.0.1",
     "formik": "^2.1.4",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "prop-types": "^15.7.2",
     "react": "^16.12.0",
     "react-codemirror2": "^6.0.0",
